@@ -83,9 +83,7 @@ def test_check_sklearn_with_package() -> None:
 
 @sklearn_not_available
 def test_check_sklearn_without_package() -> None:
-    with pytest.raises(
-        RuntimeError, match=r"'scikit-learn' package is required but not installed."
-    ):
+    with pytest.raises(RuntimeError, match=r"'sklearn' package is required but not installed."):
         check_sklearn()
 
 
