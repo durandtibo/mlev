@@ -200,3 +200,9 @@ def test_accuracy_result_to_str_large_numbers() -> None:
     assert AccuracyResult(num_correct_predictions=1000, num_predictions=10000).to_str() == (
         "[██░░░░░░░░░░░░░░░░░░]  0.1000  (1,000/10,000)"
     )
+
+
+def test_accuracy_result_to_str_empty() -> None:
+    assert AccuracyResult(num_correct_predictions=0, num_predictions=0).to_str() == (
+        "AccuracyResult: no predictions"
+    )

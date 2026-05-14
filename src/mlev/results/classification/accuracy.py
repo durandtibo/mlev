@@ -81,5 +81,7 @@ class AccuracyResult(BaseResult):
         }
 
     def to_str(self) -> str:
+        if self.num_predictions == 0:
+            return f"{self.__class__.__qualname__}: no predictions"
         accuracy = self.accuracy
         return f"{make_bar(accuracy, length=20)}  {accuracy:.4f}  ({self.num_correct_predictions:,}/{self.num_predictions:,})"
