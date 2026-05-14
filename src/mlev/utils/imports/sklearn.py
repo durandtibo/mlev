@@ -55,7 +55,7 @@ def is_sklearn_available() -> bool:
 
         ```
     """
-    return package_available("scikit-learn")
+    return package_available("sklearn")
 
 
 def sklearn_available(fn: F) -> F:
@@ -98,4 +98,4 @@ def raise_sklearn_missing_error() -> NoReturn:
 
         ```
     """
-    raise_package_missing_error("scikit-learn", "scikit-learn")
+    raise_package_missing_error("sklearn", "scikit-learn")
