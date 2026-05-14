@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from argos.testing.fixtures import rich_available, rich_not_available
-from argos.utils.logging import log_markdown
+from mlev.testing.fixtures import rich_available, rich_not_available
+from mlev.utils.logging import log_markdown
 
 ##################################
 #     Tests for log_markdown     #

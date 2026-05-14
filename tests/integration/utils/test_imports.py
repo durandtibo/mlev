@@ -1,11 +1,11 @@
 from __future__ import annotations
 
 import pytest
-from argos.testing.fixtures import (
+
+from mlev.testing.fixtures import (
     colorlog_available,
     colorlog_not_available,
 )
-
 from mlev.utils.imports import (
     check_colorlog,
     is_colorlog_available,
