@@ -57,6 +57,9 @@ class AccuracyResult(BaseResult):
         return self.num_correct_predictions / self.num_predictions
 
     def combine(self, other: AccuracyResult) -> AccuracyResult:
+        if not isinstance(other, AccuracyResult):
+            msg = f"Cannot combine {self.__class__.__qualname__} with {type(other)}"
+            raise TypeError(msg)
         return AccuracyResult(
             num_correct_predictions=self.num_correct_predictions + other.num_correct_predictions,
             num_predictions=self.num_predictions + other.num_predictions,
