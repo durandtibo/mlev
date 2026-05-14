@@ -1,4 +1,4 @@
-r"""Provide testing utilities for the argos package.
+r"""Provide testing utilities for the mlev package.
 
 This sub-package provides pytest mark decorators that can be used across
 the test suite to conditionally skip tests based on the availability of
