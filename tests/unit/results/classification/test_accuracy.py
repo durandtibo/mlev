@@ -78,6 +78,14 @@ def test_accuracy_result_combine_returns_new_object() -> None:
     original = AccuracyResult(num_correct_predictions=7, num_predictions=10)
     combined = original.combine(AccuracyResult(num_correct_predictions=3, num_predictions=5))
     assert combined is not original
+    assert original.equal(AccuracyResult(num_correct_predictions=7, num_predictions=10))
+    assert combined.equal(AccuracyResult(num_correct_predictions=10, num_predictions=15))
+
+
+def test_accuracy_result_combine_incorrect_object() -> None:
+    result = AccuracyResult(num_correct_predictions=7, num_predictions=10)
+    with pytest.raises(TypeError, match="Cannot combine AccuracyResult with"):
+        result.combine({"num_correct_predictions": 0, "num_predictions": 0})
 
 
 def test_accuracy_result_equal_true() -> None:
@@ -101,6 +109,14 @@ def test_accuracy_result_equal_false_different_num_predictions() -> None:
 def test_accuracy_result_equal_false_different_type() -> None:
     assert not AccuracyResult(num_correct_predictions=7, num_predictions=10).equal(
         {"num_correct_predictions": 7, "num_predictions": 10}
+    )
+
+
+def test_accuracy_result_equal_false_different_type_child() -> None:
+    class Child(AccuracyResult): ...
+
+    assert not AccuracyResult(num_correct_predictions=7, num_predictions=10).equal(
+        Child(num_correct_predictions=7, num_predictions=10)
     )
 
 
@@ -183,4 +199,10 @@ def test_accuracy_result_to_str_zero() -> None:
 def test_accuracy_result_to_str_large_numbers() -> None:
     assert AccuracyResult(num_correct_predictions=1000, num_predictions=10000).to_str() == (
         "[██░░░░░░░░░░░░░░░░░░]  0.1000  (1,000/10,000)"
+    )
+
+
+def test_accuracy_result_to_str_empty() -> None:
+    assert AccuracyResult(num_correct_predictions=0, num_predictions=0).to_str() == (
+        "AccuracyResult: no predictions"
     )

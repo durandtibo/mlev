@@ -57,6 +57,9 @@ class AccuracyResult(BaseResult):
         return self.num_correct_predictions / self.num_predictions
 
     def combine(self, other: AccuracyResult) -> AccuracyResult:
+        if not isinstance(other, AccuracyResult):
+            msg = f"Cannot combine {self.__class__.__qualname__} with {type(other)}"
+            raise TypeError(msg)
         return AccuracyResult(
             num_correct_predictions=self.num_correct_predictions + other.num_correct_predictions,
             num_predictions=self.num_predictions + other.num_predictions,
@@ -78,5 +81,7 @@ class AccuracyResult(BaseResult):
         }
 
     def to_str(self) -> str:
+        if self.num_predictions == 0:
+            return f"{self.__class__.__qualname__}: no predictions"
         accuracy = self.accuracy
         return f"{make_bar(accuracy, length=20)}  {accuracy:.4f}  ({self.num_correct_predictions:,}/{self.num_predictions:,})"
