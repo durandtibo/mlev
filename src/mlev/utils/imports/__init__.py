@@ -11,12 +11,16 @@ from __future__ import annotations
 __all__ = [
     "check_colorlog",
     "check_rich",
+    "check_sklearn",
     "colorlog_available",
     "is_colorlog_available",
     "is_rich_available",
+    "is_sklearn_available",
     "raise_colorlog_missing_error",
     "raise_rich_missing_error",
+    "raise_sklearn_missing_error",
     "rich_available",
+    "sklearn_available",
 ]
 
 from mlev.utils.imports.colorlog import (
@@ -30,4 +34,10 @@ from mlev.utils.imports.rich import (
     is_rich_available,
     raise_rich_missing_error,
     rich_available,
+)
+from mlev.utils.imports.sklearn import (
+    check_sklearn,
+    is_sklearn_available,
+    raise_sklearn_missing_error,
+    sklearn_available,
 )
