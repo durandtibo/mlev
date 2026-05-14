@@ -1,5 +1,5 @@
 [build-system]
-requires = ["hatchling >= 1.27", "hatchling-autoextras-hook>=0.1.2"]
+requires = ["hatchling >= 1.29", "hatchling-autoextras-hook>=0.1.2"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build]
@@ -41,9 +41,14 @@ classifiers = [
 ]
 
 requires-python = ">=3.10"
-dependencies = []
+dependencies = [
+    "coola >=1.1.6,<2.0",
+    "numpy >=2.0,<3.0",
+    "polars >=1.0,<2.0",
+]
 
 [project.optional-dependencies]
+sklearn = ["scikit-learn >=1.5,<3.0"]
 
 [dependency-groups]
 dev = [
