@@ -88,6 +88,50 @@ def test_accuracy_result_combine_incorrect_object() -> None:
         result.combine({"num_correct_predictions": 0, "num_predictions": 0})
 
 
+def test_accuracy_result_allclose_true() -> None:
+    assert AccuracyResult(num_correct_predictions=7, num_predictions=10).allclose(
+        AccuracyResult(num_correct_predictions=7, num_predictions=10)
+    )
+
+
+def test_accuracy_result_allclose_false_different_num_correct_predictions() -> None:
+    assert not AccuracyResult(num_correct_predictions=7, num_predictions=10).allclose(
+        AccuracyResult(num_correct_predictions=6, num_predictions=10)
+    )
+
+
+def test_accuracy_result_allclose_false_different_num_predictions() -> None:
+    assert not AccuracyResult(num_correct_predictions=7, num_predictions=10).allclose(
+        AccuracyResult(num_correct_predictions=7, num_predictions=11)
+    )
+
+
+def test_accuracy_result_allclose_false_different_type() -> None:
+    assert not AccuracyResult(num_correct_predictions=7, num_predictions=10).allclose(
+        {"num_correct_predictions": 7, "num_predictions": 10}
+    )
+
+
+def test_accuracy_result_allclose_false_different_type_child() -> None:
+    class Child(AccuracyResult): ...
+
+    assert not AccuracyResult(num_correct_predictions=7, num_predictions=10).allclose(
+        Child(num_correct_predictions=7, num_predictions=10)
+    )
+
+
+def test_accuracy_result_allclose_atol() -> None:
+    assert AccuracyResult(num_correct_predictions=7, num_predictions=10).allclose(
+        AccuracyResult(num_correct_predictions=7, num_predictions=10), atol=1e-3
+    )
+
+
+def test_accuracy_result_allclose_rtol() -> None:
+    assert AccuracyResult(num_correct_predictions=7, num_predictions=10).allclose(
+        AccuracyResult(num_correct_predictions=7, num_predictions=10), rtol=1e-3
+    )
+
+
 def test_accuracy_result_equal_true() -> None:
     assert AccuracyResult(num_correct_predictions=7, num_predictions=10).equal(
         AccuracyResult(num_correct_predictions=7, num_predictions=10)

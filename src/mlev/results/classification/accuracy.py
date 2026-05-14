@@ -6,6 +6,7 @@ __all__ = ["AccuracyResult"]
 
 from dataclasses import dataclass
 
+from coola.equality import objects_are_allclose, objects_are_equal
 from coola.utils.format import make_bar
 
 from mlev.results.base import BaseResult
@@ -65,13 +66,32 @@ class AccuracyResult(BaseResult):
             num_predictions=self.num_predictions + other.num_predictions,
         )
 
-    def equal(self, other: object, equal_nan: bool = False) -> bool:  # noqa: ARG002
+    def allclose(
+        self,
+        other: object,
+        *,
+        rtol: float = 1e-5,
+        atol: float = 1e-8,
+        equal_nan: bool = False,
+    ) -> bool:
         if type(other) is not type(self):
             return False
-        return (
-            self.num_correct_predictions == other.num_correct_predictions
-            and self.num_predictions == other.num_predictions
+        return objects_are_allclose(
+            self.num_correct_predictions,
+            other.num_correct_predictions,
+            rtol=rtol,
+            atol=atol,
+            equal_nan=equal_nan,
+        ) and objects_are_allclose(
+            self.num_predictions, other.num_predictions, rtol=rtol, atol=atol, equal_nan=equal_nan
         )
+
+    def equal(self, other: object, equal_nan: bool = False) -> bool:
+        if type(other) is not type(self):
+            return False
+        return objects_are_equal(
+            self.num_correct_predictions, other.num_correct_predictions, equal_nan=equal_nan
+        ) and objects_are_equal(self.num_predictions, other.num_predictions, equal_nan=equal_nan)
 
     def to_dict(self, prefix: str = "", suffix: str = "") -> dict[str, int | float]:
         return {

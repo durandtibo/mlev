@@ -7,6 +7,8 @@ __all__ = ["BaseResult"]
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
 
+from coola.equality.tester import EqualNanEqualityTester, get_default_registry
+
 if TYPE_CHECKING:
     from typing import Self
 
@@ -23,6 +25,29 @@ class BaseResult(ABC):
 
         Returns:
             The combined result of the two objects.
+        """
+
+    @abstractmethod
+    def allclose(
+        self,
+        other: object,
+        *,
+        rtol: float = 1e-5,
+        atol: float = 1e-8,
+        equal_nan: bool = False,
+    ) -> bool:
+        r"""Indicate whether two objects are equal within a tolerance.
+
+        Args:
+            other: The object to be compared with.
+            rtol: The relative tolerance parameter. Must be non-negative.
+            atol: The absolute tolerance parameter. Must be non-negative.
+            equal_nan: If ``True``, then two ``NaN``s  will be considered
+                as equal.
+
+        Returns:
+            ``True`` if the two objects are (element-wise) equal within a
+                tolerance, otherwise ``False``
         """
 
     @abstractmethod
@@ -50,3 +75,6 @@ class BaseResult(ABC):
         Returns:
             The dictionary representation of the result.
         """
+
+
+get_default_registry().register(BaseResult, EqualNanEqualityTester(), exist_ok=True)
