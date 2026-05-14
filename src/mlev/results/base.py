@@ -5,7 +5,7 @@ from __future__ import annotations
 __all__ = ["BaseResult"]
 
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from coola.equality.tester import EqualNanEqualityTester, get_default_registry
 
@@ -65,7 +65,7 @@ class BaseResult(ABC):
         """
 
     @abstractmethod
-    def to_dict(self, prefix: str = "", suffix: str = "") -> dict[str, int | float]:
+    def to_dict(self, prefix: str = "", suffix: str = "") -> dict[str, Any]:
         r"""Return a dictionary representation of the result.
 
         Args:
