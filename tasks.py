@@ -176,7 +176,7 @@ def install(
         # Install with all dependencies except docs
         invoke install
 
-        # Install only core and dev dependencies
+        # Install only results and dev dependencies
         invoke install --no-optional-deps
 
         # Install everything including docs dependencies

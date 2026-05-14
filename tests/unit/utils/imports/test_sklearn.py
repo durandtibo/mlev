@@ -37,7 +37,7 @@ def test_check_sklearn_with_package() -> None:
 def test_check_sklearn_without_package() -> None:
     with (
         patch("mlev.utils.imports.sklearn.is_sklearn_available", lambda: False),
-        pytest.raises(RuntimeError, match=r"'scikit-learn' package is required but not installed."),
+        pytest.raises(RuntimeError, match=r"'sklearn' package is required but not installed."),
     ):
         check_sklearn()
 
@@ -79,7 +79,5 @@ def test_sklearn_available_decorator_without_package() -> None:
 
 
 def test_raise_sklearn_missing_error() -> None:
-    with pytest.raises(
-        RuntimeError, match=r"'scikit-learn' package is required but not installed."
-    ):
+    with pytest.raises(RuntimeError, match=r"'sklearn' package is required but not installed."):
         raise_sklearn_missing_error()
