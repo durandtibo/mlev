@@ -63,9 +63,6 @@ def is_missing(series: pl.Series, name: str = "is_missing") -> pl.Series:
         A boolean series. ``True`` where any series is null,
         ``False`` otherwise.
 
-    Raises:
-        ValueError: if ``series`` is empty.
-
     Example:
         ```pycon
         >>> import polars as pl
@@ -84,9 +81,6 @@ def is_missing(series: pl.Series, name: str = "is_missing") -> pl.Series:
 
         ```
     """
-    if len(series) == 0:
-        msg = "'series' cannot be empty"
-        raise ValueError(msg)
     return series.is_null().alias(name)
 
 
