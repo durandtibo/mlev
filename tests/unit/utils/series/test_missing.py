@@ -4,7 +4,7 @@ import polars as pl
 import pytest
 
 from mlev.utils.missing import MISSING_POLICIES
-from mlev.utils.series import contains_missing
+from mlev.utils.series import contains_missing, multi_is_null
 
 ######################################
 #     Tests for contains_missing     #
@@ -110,3 +110,138 @@ def test_contains_missing_single_none() -> None:
 
 def test_contains_missing_single_value() -> None:
     assert not contains_missing(pl.Series("col", [1]))
+
+
+##################################
+#     Tests for multi_is_null    #
+##################################
+
+
+# --- Single series ---
+
+
+def test_multi_is_null_single_series_no_null() -> None:
+    assert multi_is_null([pl.Series("x", [1, 2, 3])]).equals(
+        pl.Series("is_null", [False, False, False])
+    )
+
+
+def test_multi_is_null_single_series_with_null() -> None:
+    assert multi_is_null([pl.Series("x", [1, None, 3])]).equals(
+        pl.Series("is_null", [False, True, False])
+    )
+
+
+def test_multi_is_null_single_series_all_null() -> None:
+    assert multi_is_null([pl.Series("x", [None, None, None], dtype=pl.Int64)]).equals(
+        pl.Series("is_null", [True, True, True])
+    )
+
+
+# --- Multiple series ---
+
+
+def test_multi_is_null_two_series_no_null() -> None:
+    assert multi_is_null([pl.Series("x", [1, 2, 3]), pl.Series("y", [4, 5, 6])]).equals(
+        pl.Series("is_null", [False, False, False])
+    )
+
+
+def test_multi_is_null_two_series_first_has_null() -> None:
+    assert multi_is_null([pl.Series("x", [1, None, 3]), pl.Series("y", [4, 5, 6])]).equals(
+        pl.Series("is_null", [False, True, False])
+    )
+
+
+def test_multi_is_null_two_series_second_has_null() -> None:
+    assert multi_is_null([pl.Series("x", [1, 2, 3]), pl.Series("y", [4, None, 6])]).equals(
+        pl.Series("is_null", [False, True, False])
+    )
+
+
+def test_multi_is_null_two_series_both_have_null() -> None:
+    assert multi_is_null([pl.Series("x", [1, None, 3]), pl.Series("y", [None, 5, 6])]).equals(
+        pl.Series("is_null", [True, True, False])
+    )
+
+
+def test_multi_is_null_two_series_null_overlap() -> None:
+    # Both series have null at the same position
+    assert multi_is_null([pl.Series("x", [1, None, 3]), pl.Series("y", [4, None, 6])]).equals(
+        pl.Series("is_null", [False, True, False])
+    )
+
+
+def test_multi_is_null_three_series() -> None:
+    assert multi_is_null(
+        [
+            pl.Series("x", [1, None, 3]),
+            pl.Series("y", [4, 5, None]),
+            pl.Series("z", [None, 8, 9]),
+        ]
+    ).equals(pl.Series("is_null", [True, True, True]))
+
+
+# --- Output series name ---
+
+
+def test_multi_is_null_default_name() -> None:
+    result = multi_is_null([pl.Series("x", [1, 2, 3])])
+    assert result.name == "is_null"
+
+
+def test_multi_is_null_custom_name() -> None:
+    result = multi_is_null([pl.Series("x", [1, 2, 3])], name="mask")
+    assert result.name == "mask"
+
+
+# --- NaN is not null ---
+
+
+def test_multi_is_null_nan_is_not_null() -> None:
+    assert multi_is_null([pl.Series("x", [1.0, float("nan"), 3.0])]).equals(
+        pl.Series("is_null", [False, False, False])
+    )
+
+
+# --- Different dtypes ---
+
+
+@pytest.mark.parametrize(
+    "series",
+    [
+        pytest.param(pl.Series("x", [1, None, 3], dtype=pl.Int8), id="int8"),
+        pytest.param(pl.Series("x", [1, None, 3], dtype=pl.Int16), id="int16"),
+        pytest.param(pl.Series("x", [1, None, 3], dtype=pl.Int32), id="int32"),
+        pytest.param(pl.Series("x", [1, None, 3], dtype=pl.Int64), id="int64"),
+        pytest.param(pl.Series("x", [1, None, 3], dtype=pl.UInt8), id="uint8"),
+        pytest.param(pl.Series("x", [1, None, 3], dtype=pl.UInt16), id="uint16"),
+        pytest.param(pl.Series("x", [1, None, 3], dtype=pl.UInt32), id="uint32"),
+        pytest.param(pl.Series("x", [1, None, 3], dtype=pl.UInt64), id="uint64"),
+        pytest.param(pl.Series("x", [1.0, None, 3.0], dtype=pl.Float32), id="float32"),
+        pytest.param(pl.Series("x", [1.0, None, 3.0], dtype=pl.Float64), id="float64"),
+        pytest.param(pl.Series("x", [True, None, False], dtype=pl.Boolean), id="bool"),
+        pytest.param(pl.Series("x", ["a", None, "c"], dtype=pl.String), id="str"),
+        pytest.param(pl.Series("x", ["2021-01-01", None, "2021-01-03"], dtype=pl.Date), id="date"),
+    ],
+)
+def test_multi_is_null_dtypes_with_null(series: pl.Series) -> None:
+    assert multi_is_null([series]).equals(pl.Series("is_null", [False, True, False]))
+
+
+# --- Edge cases ---
+
+
+def test_multi_is_null_empty_series_raises() -> None:
+    with pytest.raises(ValueError, match="'series' cannot be empty"):
+        multi_is_null([])
+
+
+def test_multi_is_null_single_element_null() -> None:
+    assert multi_is_null([pl.Series("x", [None], dtype=pl.Int64)]).equals(
+        pl.Series("is_null", [True])
+    )
+
+
+def test_multi_is_null_single_element_no_null() -> None:
+    assert multi_is_null([pl.Series("x", [1])]).equals(pl.Series("is_null", [False]))
