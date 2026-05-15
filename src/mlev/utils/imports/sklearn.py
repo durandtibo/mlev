@@ -37,6 +37,7 @@ def check_sklearn() -> None:
         ...     check_sklearn()
         ... except RuntimeError:
         ...     pass
+        ...
 
         ```
     """
@@ -101,6 +102,7 @@ def raise_sklearn_missing_error() -> NoReturn:
         ...     raise_sklearn_missing_error()
         ... except RuntimeError as e:
         ...     "'sklearn' package is required" in str(e)
+        ...
         True
 
         ```
