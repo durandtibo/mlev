@@ -22,14 +22,14 @@ class AccuracyResult(BaseResult):
 
     Example:
         ```pycon
-        >>> from mlev.results.classification import AccuracyResult
+        >>> from mlev.results import AccuracyResult
         >>> m = AccuracyResult(num_correct_predictions=7, num_predictions=10)
         >>> m
         AccuracyResult(num_correct_predictions=7, num_predictions=10)
-        >>> print(m.to_str())
-        [██████████████░░░░░░]  0.7000  (7/10)
         >>> m.to_dict()
         {'accuracy': 0.7, 'num_correct_predictions': 7, 'num_predictions': 10}
+        >>> print(m.to_str())
+        [██████████████░░░░░░]  0.7000  (7/10)
 
         ```
     """

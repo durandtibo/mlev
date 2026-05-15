@@ -14,7 +14,19 @@ if TYPE_CHECKING:
 
 
 class BaseResult(ABC):
-    r"""Base class for all results."""
+    r"""Base class for all results.
+
+    Example:
+        ```pycon
+        >>> from mlev.results import AccuracyResult
+        >>> m = AccuracyResult(num_correct_predictions=7, num_predictions=10)
+        >>> m
+        AccuracyResult(num_correct_predictions=7, num_predictions=10)
+        >>> m.to_dict()
+        {'accuracy': 0.7, 'num_correct_predictions': 7, 'num_predictions': 10}
+
+        ```
+    """
 
     @abstractmethod
     def combine(self, other: Self) -> Self:
@@ -25,6 +37,21 @@ class BaseResult(ABC):
 
         Returns:
             The combined result of the two objects.
+
+        Example:
+            ```pycon
+            >>> from mlev.results import AccuracyResult
+            >>> m1 = AccuracyResult(num_correct_predictions=7, num_predictions=10)
+            >>> m2 = AccuracyResult(num_correct_predictions=3, num_predictions=10)
+            >>> m = m1.combine(m2)
+            >>> m
+            AccuracyResult(num_correct_predictions=10, num_predictions=20)
+            >>> print(m.to_str())
+            [██████████░░░░░░░░░░]  0.5000  (10/20)
+            >>> m.to_dict()
+            {'accuracy': 0.5, 'num_correct_predictions': 10, 'num_predictions': 20}
+
+            ```
         """
 
     @abstractmethod
@@ -48,6 +75,19 @@ class BaseResult(ABC):
         Returns:
             ``True`` if the two objects are (element-wise) equal within a
                 tolerance, otherwise ``False``
+
+        Example:
+            ```pycon
+            >>> from mlev.results import AccuracyResult
+            >>> m1 = AccuracyResult(num_correct_predictions=7, num_predictions=10)
+            >>> m2 = AccuracyResult(num_correct_predictions=7, num_predictions=10)
+            >>> m3 = AccuracyResult(num_correct_predictions=5, num_predictions=10)
+            >>> m1.allclose(m2)
+            True
+            >>> m1.allclose(m3)
+            False
+
+            ```
         """
 
     @abstractmethod
@@ -62,6 +102,19 @@ class BaseResult(ABC):
 
         Returns:
             ``True`` if the two objects are equal, otherwise ``False``
+
+        Example:
+            ```pycon
+            >>> from mlev.results import AccuracyResult
+            >>> m1 = AccuracyResult(num_correct_predictions=7, num_predictions=10)
+            >>> m2 = AccuracyResult(num_correct_predictions=7, num_predictions=10)
+            >>> m3 = AccuracyResult(num_correct_predictions=5, num_predictions=10)
+            >>> m1.equal(m2)
+            True
+            >>> m1.equal(m3)
+            False
+
+            ```
         """
 
     @abstractmethod
@@ -74,6 +127,15 @@ class BaseResult(ABC):
 
         Returns:
             The dictionary representation of the result.
+
+        Example:
+        ```pycon
+        >>> from mlev.results import AccuracyResult
+        >>> m = AccuracyResult(num_correct_predictions=7, num_predictions=10)
+        >>> m.to_dict()
+        {'accuracy': 0.7, 'num_correct_predictions': 7, 'num_predictions': 10}
+
+        ```
         """
 
 
