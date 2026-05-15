@@ -7,16 +7,13 @@ There are two ways to represent missing values:
 
 from __future__ import annotations
 
-__all__ = ["contains_missing", "contains_none"]
+__all__ = ["contains_missing", "contains_none", "is_missing"]
 
 
-from typing import TYPE_CHECKING
+import numpy as np
 
 from mlev.utils.array.nan import contains_nan
 from mlev.utils.missing import check_missing_policy
-
-if TYPE_CHECKING:
-    import numpy as np
 
 
 def contains_missing(
@@ -98,3 +95,42 @@ def contains_none(arr: np.ndarray) -> bool:
         return None in arr
     except (TypeError, ValueError):
         return any(x is None for x in arr.flat)
+
+
+def is_missing(arr: np.ndarray) -> np.ndarray:
+    r"""Test element-wise for missing values and return result as a
+    boolean array.
+
+    A value is considered missing if it is ``NaN`` or ``None``.
+
+    Args:
+        arr: The input array to test.
+
+    Returns:
+        A boolean array. ``True`` where the value is missing (``NaN`` or
+        ``None``), ``False`` otherwise.
+
+    Raises:
+        ValueError: if ``arr`` is empty.
+
+    Example:
+        ```pycon
+        >>> import numpy as np
+        >>> from mlev.utils.array import is_missing
+        >>> is_missing(np.array([1.0, 0.0, float("nan"), 1.0]))
+        array([False, False,  True, False])
+        >>> is_missing(np.array([1.0, 0.0, float("nan"), 1.0, None], dtype=object))
+        array([False, False,  True, False,  True])
+
+        ```
+    """
+    if arr.dtype == object:
+        return np.array(
+            [x is None or (isinstance(x, float) and np.isnan(x)) for x in arr.flat],
+            dtype=bool,
+        ).reshape(arr.shape)
+    try:
+        return np.isnan(arr)
+    except TypeError:
+        # Non-numeric dtypes (e.g. datetime64, str) cannot be missing
+        return np.zeros(arr.shape, dtype=bool)

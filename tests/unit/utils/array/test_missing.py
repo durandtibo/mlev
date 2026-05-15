@@ -2,8 +2,9 @@ from __future__ import annotations
 
 import numpy as np
 import pytest
+from coola.equality import objects_are_equal
 
-from mlev.utils.array import contains_missing, contains_none
+from mlev.utils.array import contains_missing, contains_none, is_missing
 
 ######################################
 #     Tests for contains_missing     #
@@ -275,3 +276,135 @@ def test_contains_none_fallback_type_error_with_none() -> None:
 def test_contains_none_fallback_type_error_without_none() -> None:
     arr = np.array([BadEqTypeError(), BadEqTypeError()], dtype=object)
     assert not contains_none(arr)
+
+
+##################################
+#     Tests for is_missing       #
+##################################
+
+
+# --- Float arrays ---
+
+
+def test_is_missing_float_no_missing() -> None:
+    result = is_missing(np.array([1.0, 2.0, 3.0]))
+    assert objects_are_equal(result, np.array([False, False, False], dtype=bool))
+
+
+def test_is_missing_float_with_nan() -> None:
+    result = is_missing(np.array([1.0, float("nan"), 3.0]))
+    assert objects_are_equal(result, np.array([False, True, False], dtype=bool))
+
+
+def test_is_missing_float_all_nan() -> None:
+    result = is_missing(np.array([float("nan"), float("nan")]))
+    assert objects_are_equal(result, np.array([True, True], dtype=bool))
+
+
+def test_is_missing_float_nan_at_start() -> None:
+    result = is_missing(np.array([float("nan"), 2.0, 3.0]))
+    assert objects_are_equal(result, np.array([True, False, False], dtype=bool))
+
+
+def test_is_missing_float_nan_at_end() -> None:
+    result = is_missing(np.array([1.0, 2.0, float("nan")]))
+    assert objects_are_equal(result, np.array([False, False, True], dtype=bool))
+
+
+# --- Object arrays ---
+
+
+def test_is_missing_object_no_missing() -> None:
+    result = is_missing(np.array([1, 2, 3], dtype=object))
+    assert objects_are_equal(result, np.array([False, False, False], dtype=bool))
+
+
+def test_is_missing_object_with_none() -> None:
+    result = is_missing(np.array([1, None, 3], dtype=object))
+    assert objects_are_equal(result, np.array([False, True, False], dtype=bool))
+
+
+def test_is_missing_object_with_nan() -> None:
+    result = is_missing(np.array([1, float("nan"), 3], dtype=object))
+    assert objects_are_equal(result, np.array([False, True, False], dtype=bool))
+
+
+def test_is_missing_object_with_nan_and_none() -> None:
+    result = is_missing(np.array([None, float("nan"), 3], dtype=object))
+    assert objects_are_equal(result, np.array([True, True, False], dtype=bool))
+
+
+def test_is_missing_object_all_none() -> None:
+    result = is_missing(np.array([None, None, None], dtype=object))
+    assert objects_are_equal(result, np.array([True, True, True], dtype=bool))
+
+
+def test_is_missing_object_none_not_confused_with_zero() -> None:
+    result = is_missing(np.array([0, False, "", []], dtype=object))
+    assert objects_are_equal(result, np.array([False, False, False, False], dtype=bool))
+
+
+# --- Non-numeric dtypes ---
+
+
+def test_is_missing_str_array() -> None:
+    result = is_missing(np.array(["a", "b", "c"]))
+    assert objects_are_equal(result, np.array([False, False, False], dtype=bool))
+
+
+def test_is_missing_datetime_array() -> None:
+    result = is_missing(np.array(["2021-01-01", "2021-01-02"], dtype="datetime64"))
+    assert objects_are_equal(result, np.array([False, False], dtype=bool))
+
+
+def test_is_missing_bool_array() -> None:
+    result = is_missing(np.array([True, False, True]))
+    assert objects_are_equal(result, np.array([False, False, False], dtype=bool))
+
+
+def test_is_missing_int_array() -> None:
+    result = is_missing(np.array([1, 2, 3]))
+    assert objects_are_equal(result, np.array([False, False, False], dtype=bool))
+
+
+# --- Return dtype ---
+
+
+def test_is_missing_returns_bool_dtype() -> None:
+    assert is_missing(np.array([1.0, float("nan")])).dtype == bool
+
+
+def test_is_missing_object_returns_bool_dtype() -> None:
+    assert is_missing(np.array([1, None], dtype=object)).dtype == bool
+
+
+# --- Multidimensional arrays ---
+
+
+def test_is_missing_2d_float_with_nan() -> None:
+    result = is_missing(np.array([[1.0, float("nan")], [3.0, 4.0]]))
+    assert objects_are_equal(result, np.array([[False, True], [False, False]], dtype=bool))
+
+
+def test_is_missing_2d_float_no_missing() -> None:
+    result = is_missing(np.array([[1.0, 2.0], [3.0, 4.0]]))
+    assert objects_are_equal(result, np.array([[False, False], [False, False]], dtype=bool))
+
+
+def test_is_missing_2d_object_with_none() -> None:
+    result = is_missing(np.array([[1, None], [3, 4]], dtype=object))
+    assert objects_are_equal(result, np.array([[False, True], [False, False]], dtype=bool))
+
+
+def test_is_missing_2d_preserves_shape() -> None:
+    arr = np.array([[1.0, float("nan")], [3.0, 4.0]])
+    assert is_missing(arr).shape == arr.shape
+
+
+# --- Empty arrays ---
+
+
+@pytest.mark.parametrize("dtype", [float, object, bool, int])
+def test_is_missing_empty_array(dtype: type) -> None:
+    result = is_missing(np.array([], dtype=dtype))
+    assert objects_are_equal(result, np.array([], dtype=bool))
