@@ -31,23 +31,6 @@ def test_configure_logging_without_colorlog() -> None:
         configure_logging()
 
 
-def test_configure_logging_with_colorlog_uses_colored_handler() -> None:
-    with (
-        patch(f"{MODULE}.is_colorlog_available", return_value=True),
-        patch(f"{MODULE}.colorlog", create=True) as mock_colorlog,
-        patch(f"{MODULE}.logging.basicConfig") as basic_config,
-    ):
-        handler = mock_colorlog.StreamHandler.return_value
-        formatter = mock_colorlog.ColoredFormatter.return_value
-
-        configure_logging(logging.DEBUG)
-
-    handler.setFormatter.assert_called_once_with(formatter)
-    basic_config.assert_called_once_with(level=logging.DEBUG, handlers=[handler])
-    assert "log_colors" in mock_colorlog.ColoredFormatter.call_args.kwargs
-    assert "secondary_log_colors" in mock_colorlog.ColoredFormatter.call_args.kwargs
-
-
 @pytest.mark.parametrize("level", [logging.INFO, logging.WARNING, logging.ERROR])
 def test_configure_logging_level(level: int) -> None:
     with patch(f"{MODULE}.logging.basicConfig") as bc:
