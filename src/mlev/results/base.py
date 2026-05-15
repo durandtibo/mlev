@@ -1,4 +1,4 @@
-r"""Define the base class for all results."""
+r"""Base protocol for metric result objects."""
 
 from __future__ import annotations
 
@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 
 
 class BaseResult(ABC):
-    r"""Base class for all results.
+    r"""Base class for immutable metric result containers.
 
     Example:
         ```pycon
@@ -30,7 +30,7 @@ class BaseResult(ABC):
 
     @abstractmethod
     def combine(self, other: Self) -> Self:
-        r"""Return the combined result of the two objects.
+        r"""Combine two compatible results into a new result.
 
         Args:
             other: The value to combine with.
@@ -63,7 +63,7 @@ class BaseResult(ABC):
         atol: float = 1e-8,
         equal_nan: bool = False,
     ) -> bool:
-        r"""Indicate whether two objects are equal within a tolerance.
+        r"""Check whether two results are numerically close.
 
         Args:
             other: The object to be compared with.
@@ -92,8 +92,7 @@ class BaseResult(ABC):
 
     @abstractmethod
     def equal(self, other: object, equal_nan: bool = False) -> bool:
-        r"""Return ``True`` if the two objects are equal, otherwise
-        ``False``.
+        r"""Check whether two results are exactly equal.
 
         Args:
             other: The value to compare with.
@@ -119,7 +118,7 @@ class BaseResult(ABC):
 
     @abstractmethod
     def to_dict(self, prefix: str = "", suffix: str = "") -> dict[str, Any]:
-        r"""Return a dictionary representation of the result.
+        r"""Export the result as a dictionary.
 
         Args:
             prefix: The prefix to add to each key of the result.
@@ -129,13 +128,13 @@ class BaseResult(ABC):
             The dictionary representation of the result.
 
         Example:
-        ```pycon
-        >>> from mlev.results import AccuracyResult
-        >>> m = AccuracyResult(num_correct_predictions=7, num_predictions=10)
-        >>> m.to_dict()
-        {'accuracy': 0.7, 'num_correct_predictions': 7, 'num_predictions': 10}
+            ```pycon
+            >>> from mlev.results import AccuracyResult
+            >>> m = AccuracyResult(num_correct_predictions=7, num_predictions=10)
+            >>> m.to_dict()
+            {'accuracy': 0.7, 'num_correct_predictions': 7, 'num_predictions': 10}
 
-        ```
+            ```
         """
 
 

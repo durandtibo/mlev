@@ -1,5 +1,4 @@
-r"""Contain utility functions to configure the standard logging
-library."""
+r"""Helpers to configure and format logging output."""
 
 from __future__ import annotations
 
@@ -85,7 +84,15 @@ def log_dict_pretty(
         data: The dictionary to log.
         level: The log level used when ``rich`` is not available.
             Defaults to ``logging.INFO``.
-        title: The title of the log message.
+        title: Optional panel title when ``rich`` is available, and a
+            text prefix when ``rich`` is unavailable.
+
+    Example:
+        ```pycon
+        >>> from mlev.utils.logging import log_dict_pretty
+        >>> log_dict_pretty({"accuracy": 0.75}, title="Validation")
+
+        ```
     """
     if is_rich_available():
         console = Console()

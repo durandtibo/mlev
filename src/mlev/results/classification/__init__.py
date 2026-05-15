@@ -1,4 +1,4 @@
-r"""Contain the classification results."""
+r"""Classification-specific result objects."""
 
 from __future__ import annotations
 

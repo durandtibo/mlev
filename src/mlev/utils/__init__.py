@@ -1,1 +1,1 @@
-r"""Provide utility functions for the mlev package."""
+r"""General utilities shared by mlev components."""

@@ -1,1 +1,1 @@
-r"""Contain the class implementation of the metrics for arrays."""
+r"""Array-oriented metric objects."""

@@ -1,4 +1,4 @@
-r"""Contain utilities for optional scikit-learn dependency."""
+r"""Utilities to work with the optional ``scikit-learn`` dependency."""
 
 from __future__ import annotations
 
@@ -33,7 +33,10 @@ def check_sklearn() -> None:
     Example:
         ```pycon
         >>> from mlev.utils.imports import check_sklearn
-        >>> check_sklearn()
+        >>> try:
+        ...     check_sklearn()
+        ... except RuntimeError:
+        ...     pass
 
         ```
     """
@@ -66,8 +69,8 @@ def sklearn_available(fn: F) -> F:
         fn: The function to conditionally execute.
 
     Returns:
-        A wrapper around ``fn`` if ``sklearn`` package is installed,
-            otherwise ``None``.
+        A wrapper around ``fn``. When ``sklearn`` is unavailable, calling
+            the wrapper returns ``None``.
 
     Example:
         ```pycon
@@ -94,7 +97,11 @@ def raise_sklearn_missing_error() -> NoReturn:
     Example:
         ```pycon
         >>> from mlev.utils.imports import raise_sklearn_missing_error
-        >>> raise_sklearn_missing_error()  # doctest: +SKIP
+        >>> try:
+        ...     raise_sklearn_missing_error()
+        ... except RuntimeError as e:
+        ...     "'sklearn' package is required" in str(e)
+        True
 
         ```
     """

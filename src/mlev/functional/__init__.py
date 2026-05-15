@@ -1,1 +1,1 @@
-r"""Contain the functional implementation of the metrics."""
+r"""Functional helpers to compute evaluation quantities."""

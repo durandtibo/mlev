@@ -1,1 +1,1 @@
-r"""Root package."""
+r"""Utilities to evaluate machine learning predictions."""

@@ -1,4 +1,4 @@
-r"""Contain the results."""
+r"""Result objects that hold computed evaluation values."""
 
 from __future__ import annotations
 

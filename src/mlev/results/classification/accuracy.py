@@ -1,4 +1,4 @@
-r"""Contain the accuracy result."""
+r"""Classification accuracy result implementation."""
 
 from __future__ import annotations
 
@@ -15,7 +15,7 @@ from mlev.results.base import BaseResult
 
 @dataclass(frozen=True)
 class AccuracyResult(BaseResult):
-    r"""Define the accuracy result.
+    r"""Store aggregated values used to compute classification accuracy.
 
     Attributes:
         num_correct_predictions: The number of correct predictions.
@@ -41,6 +41,14 @@ class AccuracyResult(BaseResult):
     num_predictions: int
 
     def __post_init__(self) -> None:
+        r"""Validate metric counts after dataclass initialization.
+
+        Raises:
+            ValueError: If ``num_predictions`` is negative, if
+                ``num_correct_predictions`` is negative, or if
+                ``num_correct_predictions`` is greater than
+                ``num_predictions``.
+        """
         if self.num_predictions < 0:
             msg = f"num_predictions must be >= 0, got {self.num_predictions}"
             raise ValueError(msg)
@@ -56,6 +64,12 @@ class AccuracyResult(BaseResult):
 
     @property
     def accuracy(self) -> float:
+        r"""Return the accuracy ratio.
+
+        Returns:
+            The ratio ``num_correct_predictions / num_predictions``.
+            Returns ``nan`` when ``num_predictions`` is ``0``.
+        """
         if self.num_predictions == 0:
             return float("nan")
         return self.num_correct_predictions / self.num_predictions
@@ -104,6 +118,15 @@ class AccuracyResult(BaseResult):
         }
 
     def to_str(self) -> str:
+        r"""Return a human-readable summary string.
+
+        Returns:
+            A progress-bar based summary when prediction counts are
+            available, ``"AccuracyResult: no predictions"`` when
+            ``num_predictions`` is ``0``, and
+            ``"AccuracyResult: unknown number of correct predictions"``
+            when ``num_correct_predictions`` is ``nan``.
+        """
         if self.num_predictions == 0:
             return f"{self.__class__.__qualname__}: no predictions"
         if math.isnan(self.num_correct_predictions):

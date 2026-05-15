@@ -1,9 +1,10 @@
-r"""Contain utility functions to check and import optional dependencies.
+r"""Helpers for optional dependencies used by mlev.
 
-This package exposes helper functions and decorators for the optional
-``colorlog`` and ``rich`` packages, such as
-:func:`is_colorlog_available`, :func:`is_rich_available`, and the
-:func:`colorlog_available` / :func:`rich_available` decorators.
+The utilities in this package let callers:
+
+- check whether an optional package is installed,
+- fail early with a clear error when a package is required,
+- gate function execution behind package availability.
 """
 
 from __future__ import annotations
