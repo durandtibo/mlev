@@ -2,7 +2,7 @@ r"""Utilities to inspect ``polars.Series`` with missing values."""
 
 from __future__ import annotations
 
-__all__ = ["contains_missing"]
+__all__ = ["contains_missing", "is_missing"]
 
 import functools
 from typing import TYPE_CHECKING
@@ -52,6 +52,44 @@ def contains_missing(x: pl.Series, missing_policy: str = "propagate") -> bool:
     return has_missing
 
 
+def is_missing(series: pl.Series, name: str = "is_missing") -> pl.Series:
+    r"""Test element-wise for null and return result as a boolean series.
+
+    Args:
+        series: The input series to test.
+        name: The name of the output boolean series. Defaults to ``'is_missing'``.
+
+    Returns:
+        A boolean series. ``True`` where any series is null,
+        ``False`` otherwise.
+
+    Raises:
+        ValueError: if ``series`` is empty.
+
+    Example:
+        ```pycon
+        >>> import polars as pl
+        >>> from mlev.utils.series import is_missing
+        >>> mask = is_missing(pl.Series("x", [1, 0, 0, 1, None]))
+        >>> mask
+        shape: (5,)
+        Series: 'is_missing' [bool]
+        [
+           false
+           false
+           false
+           false
+           true
+        ]
+
+        ```
+    """
+    if len(series) == 0:
+        msg = "'series' cannot be empty"
+        raise ValueError(msg)
+    return series.is_null().alias(name)
+
+
 def multi_is_missing(series: Sequence[pl.Series], name: str = "is_missing") -> pl.Series:
     r"""Test element-wise for null for all input series and return result
     as a boolean series.
@@ -91,4 +129,4 @@ def multi_is_missing(series: Sequence[pl.Series], name: str = "is_missing") -> p
     if len(series) == 0:
         msg = "'series' cannot be empty"
         raise ValueError(msg)
-    return functools.reduce(lambda a, b: a | b, (s.is_null() for s in series)).alias(name)
+    return functools.reduce(lambda a, b: a | b, (is_missing(s) for s in series)).alias(name)
