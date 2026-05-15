@@ -249,7 +249,8 @@ class BadEq:
 
 
 class BadEqTypeError:
-    """Element whose __eq__ raises TypeError, triggering the fallback."""
+    """Element whose __eq__ raises TypeError, triggering the
+    fallback."""
 
     def __eq__(self, other: object) -> bool:
         msg = "cannot compare"
