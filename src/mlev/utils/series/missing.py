@@ -2,7 +2,7 @@ r"""Utilities to inspect ``polars.Series`` with missing values."""
 
 from __future__ import annotations
 
-__all__ = ["series_contains_missing"]
+__all__ = ["contains_missing"]
 
 
 from typing import TYPE_CHECKING
@@ -13,7 +13,7 @@ if TYPE_CHECKING:
     import polars as pl
 
 
-def series_contains_missing(x: pl.Series, missing_policy: str = "propagate") -> bool:
+def contains_missing(x: pl.Series, missing_policy: str = "propagate") -> bool:
     r"""Indicate if the given series contains at least one missing value.
 
     Missing values are represented by ``None``.
@@ -33,10 +33,10 @@ def series_contains_missing(x: pl.Series, missing_policy: str = "propagate") -> 
     Example:
         ```pycon
         >>> import polars as pl
-        >>> from mlev.utils.series import series_contains_missing
-        >>> series_contains_missing(pl.Series("col", [1, 2, 3]))
+        >>> from mlev.utils.series import contains_missing
+        >>> contains_missing(pl.Series("col", [1, 2, 3]))
         False
-        >>> series_contains_missing(pl.Series("col", [1, None, 3]))
+        >>> contains_missing(pl.Series("col", [1, None, 3]))
         True
 
         ```
