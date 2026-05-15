@@ -52,14 +52,14 @@ def contains_missing(x: pl.Series, missing_policy: str = "propagate") -> bool:
     return has_missing
 
 
-def multi_is_null(series: Sequence[pl.Series], name: str = "is_null") -> pl.Series:
+def multi_is_missing(series: Sequence[pl.Series], name: str = "is_missing") -> pl.Series:
     r"""Test element-wise for null for all input series and return result
     as a boolean series.
 
     Args:
         series: The input series to test. All the series must have the
             same shape.
-        name: The name of the output boolean series. Defaults to ``'is_null'``.
+        name: The name of the output boolean series. Defaults to ``'is_missing'``.
 
     Returns:
         A boolean series. ``True`` where any series is null,
@@ -71,13 +71,13 @@ def multi_is_null(series: Sequence[pl.Series], name: str = "is_null") -> pl.Seri
     Example:
         ```pycon
         >>> import polars as pl
-        >>> from mlev.utils.series import multi_is_null
-        >>> mask = multi_is_null(
+        >>> from mlev.utils.series import multi_is_missing
+        >>> mask = multi_is_missing(
         ...     [pl.Series("x", [1, 0, 0, 1, None]), pl.Series("y", [1, None, 0, 1, 1])]
         ... )
         >>> mask
         shape: (5,)
-        Series: 'is_null' [bool]
+        Series: 'is_missing' [bool]
         [
            false
            true
