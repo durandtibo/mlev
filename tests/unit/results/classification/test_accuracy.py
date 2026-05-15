@@ -74,6 +74,12 @@ def test_accuracy_result_accuracy_no_predictions() -> None:
     assert math.isnan(AccuracyResult(num_correct_predictions=0, num_predictions=0).accuracy)
 
 
+def test_accuracy_result_accuracy_num_correct_predictions_is_nan() -> None:
+    assert math.isnan(
+        AccuracyResult(num_correct_predictions=float("nan"), num_predictions=10).accuracy
+    )
+
+
 def test_accuracy_result_combine() -> None:
     result = AccuracyResult(num_correct_predictions=7, num_predictions=10).combine(
         AccuracyResult(num_correct_predictions=3, num_predictions=5)
@@ -86,6 +92,15 @@ def test_accuracy_result_combine_empty() -> None:
         AccuracyResult(num_correct_predictions=0, num_predictions=0)
     )
     assert result.equal(AccuracyResult(num_correct_predictions=7, num_predictions=10))
+
+
+def test_accuracy_result_combine_nan() -> None:
+    result = AccuracyResult(num_correct_predictions=7, num_predictions=10).combine(
+        AccuracyResult(num_correct_predictions=float("nan"), num_predictions=5)
+    )
+    assert result.equal(
+        AccuracyResult(num_correct_predictions=float("nan"), num_predictions=15), equal_nan=True
+    )
 
 
 def test_accuracy_result_combine_returns_new_object() -> None:
@@ -236,6 +251,14 @@ def test_accuracy_result_to_dict_no_predictions() -> None:
     )
 
 
+def test_accuracy_result_to_dict_nan() -> None:
+    assert objects_are_equal(
+        AccuracyResult(num_correct_predictions=float("nan"), num_predictions=10).to_dict(),
+        {"accuracy": float("nan"), "num_correct_predictions": float("nan"), "num_predictions": 10},
+        equal_nan=True,
+    )
+
+
 def test_accuracy_result_to_str() -> None:
     assert AccuracyResult(num_correct_predictions=7, num_predictions=10).to_str() == (
         "[██████████████░░░░░░]  0.7000  (7/10)"
@@ -263,4 +286,10 @@ def test_accuracy_result_to_str_large_numbers() -> None:
 def test_accuracy_result_to_str_empty() -> None:
     assert AccuracyResult(num_correct_predictions=0, num_predictions=0).to_str() == (
         "AccuracyResult: no predictions"
+    )
+
+
+def test_accuracy_result_to_str_nan() -> None:
+    assert AccuracyResult(num_correct_predictions=float("nan"), num_predictions=10).to_str() == (
+        "AccuracyResult: unknown number of correct predictions"
     )

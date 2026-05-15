@@ -54,8 +54,11 @@ def contains_nan(arr: np.ndarray, nan_policy: str = "propagate", name: str = "in
 
     Example:
         ```pycon
+        >>> import numpy as np
         >>> from mlev.utils.array import contains_nan
-        >>> contains_nan()
+        >>> bool(contains_nan(np.array([1, 2, 3])))
+        False
+        >>> bool(contains_nan(np.array([1, 2, np.nan])))
         True
 
         ```

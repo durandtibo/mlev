@@ -4,6 +4,7 @@ from __future__ import annotations
 
 __all__ = ["AccuracyResult"]
 
+import math
 from dataclasses import dataclass
 
 from coola.equality import objects_are_allclose, objects_are_equal
@@ -18,6 +19,8 @@ class AccuracyResult(BaseResult):
 
     Attributes:
         num_correct_predictions: The number of correct predictions.
+            Set to NaN if the number of correct predictions is unknown
+            because of missing values.
         num_predictions: The number of predictions.
 
     Example:
@@ -34,7 +37,7 @@ class AccuracyResult(BaseResult):
         ```
     """
 
-    num_correct_predictions: int
+    num_correct_predictions: int | float
     num_predictions: int
 
     def __post_init__(self) -> None:
@@ -103,5 +106,10 @@ class AccuracyResult(BaseResult):
     def to_str(self) -> str:
         if self.num_predictions == 0:
             return f"{self.__class__.__qualname__}: no predictions"
+        if math.isnan(self.num_correct_predictions):
+            return f"{self.__class__.__qualname__}: unknown number of correct predictions"
         accuracy = self.accuracy
-        return f"{make_bar(accuracy, length=20)}  {accuracy:.4f}  ({self.num_correct_predictions:,}/{self.num_predictions:,})"
+        return (
+            f"{make_bar(accuracy, length=20)}  {accuracy:.4f}  "
+            f"({self.num_correct_predictions:,}/{self.num_predictions:,})"
+        )
