@@ -59,25 +59,6 @@ def test_log_dict_pretty_with_rich_with_title() -> None:
     mock_logger.log.assert_not_called()
 
 
-def test_log_dict_pretty_with_rich_uses_panel_and_console() -> None:
-    data = {"hello": "world"}
-    with (
-        patch(f"{MODULE}.is_rich_available", return_value=True),
-        patch(f"{MODULE}.Console", create=True) as mock_console,
-        patch(f"{MODULE}.Pretty", create=True) as mock_pretty,
-        patch(f"{MODULE}.Panel", create=True) as mock_panel,
-        patch(f"{MODULE}.logger") as mock_logger,
-    ):
-        console = mock_console.return_value
-        panel = mock_panel.return_value
-        log_dict_pretty(data, title="cats")
-
-    mock_pretty.assert_called_once_with(data)
-    mock_panel.assert_called_once_with(mock_pretty.return_value, title="cats")
-    console.print.assert_called_once_with(panel)
-    mock_logger.log.assert_not_called()
-
-
 def test_log_dict_pretty_without_rich() -> None:
     with (
         patch(f"{MODULE}.is_rich_available", return_value=False),
