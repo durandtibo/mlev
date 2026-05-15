@@ -37,6 +37,7 @@ def check_rich() -> None:
         ...     check_rich()
         ... except RuntimeError:
         ...     pass
+        ...
 
         ```
     """
@@ -101,6 +102,7 @@ def raise_rich_missing_error() -> NoReturn:
         ...     raise_rich_missing_error()
         ... except RuntimeError as e:
         ...     "'rich' package is required" in str(e)
+        ...
         True
 
         ```

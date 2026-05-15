@@ -37,6 +37,7 @@ def check_colorlog() -> None:
         ...     check_colorlog()
         ... except RuntimeError:
         ...     pass
+        ...
 
         ```
     """
@@ -101,6 +102,7 @@ def raise_colorlog_missing_error() -> NoReturn:
         ...     raise_colorlog_missing_error()
         ... except RuntimeError as e:
         ...     "'colorlog' package is required" in str(e)
+        ...
         True
 
         ```
