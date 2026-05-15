@@ -44,6 +44,20 @@ def test_accuracy_result_invalid_num_correct_predictions_exceeds_num_predictions
         AccuracyResult(num_correct_predictions=11, num_predictions=10)
 
 
+def test_accuracy_result_repr() -> None:
+    assert (
+        repr(AccuracyResult(num_correct_predictions=7, num_predictions=10))
+        == "AccuracyResult(num_correct_predictions=7, num_predictions=10)"
+    )
+
+
+def test_accuracy_result_str() -> None:
+    assert (
+        repr(AccuracyResult(num_correct_predictions=7, num_predictions=10))
+        == "AccuracyResult(num_correct_predictions=7, num_predictions=10)"
+    )
+
+
 def test_accuracy_result_accuracy() -> None:
     assert AccuracyResult(num_correct_predictions=7, num_predictions=10).accuracy == 0.7
 
