@@ -1,4 +1,4 @@
-r"""Contain utilities for optional colorlog dependency."""
+r"""Utilities to work with the optional ``colorlog`` dependency."""
 
 from __future__ import annotations
 
@@ -33,7 +33,10 @@ def check_colorlog() -> None:
     Example:
         ```pycon
         >>> from mlev.utils.imports import check_colorlog
-        >>> check_colorlog()
+        >>> try:
+        ...     check_colorlog()
+        ... except RuntimeError:
+        ...     pass
 
         ```
     """
@@ -66,8 +69,8 @@ def colorlog_available(fn: F) -> F:
         fn: The function to conditionally execute.
 
     Returns:
-        A wrapper around ``fn`` if ``colorlog`` package is installed,
-            otherwise ``None``.
+        A wrapper around ``fn``. When ``colorlog`` is unavailable, calling
+            the wrapper returns ``None``.
 
     Example:
         ```pycon
@@ -94,7 +97,11 @@ def raise_colorlog_missing_error() -> NoReturn:
     Example:
         ```pycon
         >>> from mlev.utils.imports import raise_colorlog_missing_error
-        >>> raise_colorlog_missing_error()  # doctest: +SKIP
+        >>> try:
+        ...     raise_colorlog_missing_error()
+        ... except RuntimeError as e:
+        ...     "'colorlog' package is required" in str(e)
+        True
 
         ```
     """

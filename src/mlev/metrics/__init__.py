@@ -1,1 +1,1 @@
-r"""Contain the class implementation of the metrics."""
+r"""Result-based metric objects for model evaluation."""

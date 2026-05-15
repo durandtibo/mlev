@@ -1,4 +1,4 @@
-r"""Contain utility functions for the missing value policy."""
+r"""Validation helpers for missing-value handling policies."""
 
 from __future__ import annotations
 
@@ -9,14 +9,14 @@ MISSING_POLICIES = ["omit", "propagate", "raise"]
 
 
 def check_missing_policy(missing_policy: str) -> None:
-    r"""Check the missing value policy.
+    r"""Validate a missing-value policy value.
 
     Args:
-        missing_policy: The missing value policy.
+        missing_policy: The policy name to validate.
 
     Raises:
-        ValueError: if ``missing_policy`` is not ``'omit'``,
-            ``'propagate'``, or ``'raise'``.
+        ValueError: If ``missing_policy`` is not one of
+            :obj:`mlev.utils.missing.MISSING_POLICIES`.
 
     Example:
         ```pycon

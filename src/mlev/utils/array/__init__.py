@@ -1,4 +1,4 @@
-r"""Contain utilities for arrays."""
+r"""Helpers to validate and convert array-like inputs."""
 
 from __future__ import annotations
 

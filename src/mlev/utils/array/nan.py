@@ -1,4 +1,4 @@
-r"""Contain array-like utilities."""
+r"""Utilities to validate NaN policies and inspect arrays for NaNs."""
 
 from __future__ import annotations
 
@@ -11,14 +11,14 @@ NAN_POLICIES = ["omit", "propagate", "raise"]
 
 
 def check_nan_policy(nan_policy: str) -> None:
-    r"""Check the NaN policy.
+    r"""Validate a NaN handling policy value.
 
     Args:
-        nan_policy: The NaN policy.
+        nan_policy: The policy name to validate.
 
     Raises:
-        ValueError: if ``nan_policy`` is not ``'omit'``,
-            ``'propagate'``, or ``'raise'``.
+        ValueError: If ``nan_policy`` is not one of
+            :obj:`mlev.utils.array.nan.NAN_POLICIES`.
 
     Example:
         ```pycon

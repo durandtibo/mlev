@@ -1,4 +1,4 @@
-r"""Contain array-like utilities."""
+r"""Utilities to convert array-like objects to NumPy arrays."""
 
 from __future__ import annotations
 

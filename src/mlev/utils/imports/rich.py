@@ -1,4 +1,4 @@
-r"""Contain utilities for optional rich dependency."""
+r"""Utilities to work with the optional ``rich`` dependency."""
 
 from __future__ import annotations
 
@@ -33,7 +33,10 @@ def check_rich() -> None:
     Example:
         ```pycon
         >>> from mlev.utils.imports import check_rich
-        >>> check_rich()
+        >>> try:
+        ...     check_rich()
+        ... except RuntimeError:
+        ...     pass
 
         ```
     """
@@ -66,8 +69,8 @@ def rich_available(fn: F) -> F:
         fn: The function to conditionally execute.
 
     Returns:
-        A wrapper around ``fn`` if ``rich`` package is installed,
-            otherwise ``None``.
+        A wrapper around ``fn``. When ``rich`` is unavailable, calling
+            the wrapper returns ``None``.
 
     Example:
         ```pycon
@@ -94,7 +97,11 @@ def raise_rich_missing_error() -> NoReturn:
     Example:
         ```pycon
         >>> from mlev.utils.imports import raise_rich_missing_error
-        >>> raise_rich_missing_error()  # doctest: +SKIP
+        >>> try:
+        ...     raise_rich_missing_error()
+        ... except RuntimeError as e:
+        ...     "'rich' package is required" in str(e)
+        True
 
         ```
     """

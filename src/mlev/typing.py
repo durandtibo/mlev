@@ -1,4 +1,4 @@
-r"""Contain typing utilities."""
+r"""Shared typing aliases used by the public API."""
 
 from __future__ import annotations
 
