@@ -2,12 +2,14 @@ r"""Utilities to validate NaN policies and inspect arrays for NaNs."""
 
 from __future__ import annotations
 
-__all__ = ["NAN_POLICIES", "check_nan_policy", "contains_nan"]
+__all__ = ["check_nan_policy", "contains_nan"]
 
+from typing import Literal
 
 import numpy as np
 
 NAN_POLICIES = ["omit", "propagate", "raise"]
+NanPolicy = Literal["omit", "propagate", "raise"]
 
 
 def check_nan_policy(nan_policy: str) -> None:
@@ -17,8 +19,8 @@ def check_nan_policy(nan_policy: str) -> None:
         nan_policy: The policy name to validate.
 
     Raises:
-        ValueError: If ``nan_policy`` is not one of
-            :obj:`mlev.utils.array.nan.NAN_POLICIES`.
+        ValueError: if ``nan_policy`` is not ``'omit'``,
+            ``'propagate'``, or ``'raise'``.
 
     Example:
         ```pycon
@@ -35,7 +37,7 @@ def check_nan_policy(nan_policy: str) -> None:
         raise ValueError(msg)
 
 
-def contains_nan(arr: np.ndarray, nan_policy: str = "propagate", name: str = "input") -> bool:
+def contains_nan(arr: np.ndarray, nan_policy: NanPolicy = "propagate", name: str = "input") -> bool:
     r"""Indicate if the given array contains at least one NaN value.
 
     Args:
@@ -56,15 +58,26 @@ def contains_nan(arr: np.ndarray, nan_policy: str = "propagate", name: str = "in
         ```pycon
         >>> import numpy as np
         >>> from mlev.utils.array import contains_nan
-        >>> bool(contains_nan(np.array([1, 2, 3])))
+        >>> contains_nan(np.array([1, 2, 3]))
         False
-        >>> bool(contains_nan(np.array([1, 2, np.nan])))
+        >>> contains_nan(np.array([1, 2, np.nan]))
         True
+        >>> contains_nan(np.array([1, 2, float("nan")], dtype=object))
+        True
+        >>> contains_nan(np.array(["a", "b", "c"]))
+        False
 
         ```
     """
     check_nan_policy(nan_policy)
-    isnan = np.any(np.isnan(arr))
+    if arr.dtype == object:
+        isnan = any(isinstance(x, float) and np.isnan(x) for x in arr.flat)
+    else:
+        try:
+            isnan = bool(np.isnan(arr).any())
+        except TypeError:
+            # Non-numeric dtypes (e.g. datetime64, str) cannot contain NaN
+            isnan = False
     if isnan and nan_policy == "raise":
         msg = f"{name} contains at least one NaN value"
         raise ValueError(msg)
