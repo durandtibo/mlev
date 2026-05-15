@@ -248,6 +248,14 @@ class BadEq:
         raise ValueError(msg)
 
 
+class BadEqTypeError:
+    """Element whose __eq__ raises TypeError, triggering the fallback."""
+
+    def __eq__(self, other: object) -> bool:
+        msg = "cannot compare"
+        raise TypeError(msg)
+
+
 def test_contains_none_fallback_with_none() -> None:
     arr = np.array([BadEq(), None], dtype=object)
     assert contains_none(arr)
@@ -255,4 +263,14 @@ def test_contains_none_fallback_with_none() -> None:
 
 def test_contains_none_fallback_without_none() -> None:
     arr = np.array([BadEq(), BadEq()], dtype=object)
+    assert not contains_none(arr)
+
+
+def test_contains_none_fallback_type_error_with_none() -> None:
+    arr = np.array([BadEqTypeError(), None], dtype=object)
+    assert contains_none(arr)
+
+
+def test_contains_none_fallback_type_error_without_none() -> None:
+    arr = np.array([BadEqTypeError(), BadEqTypeError()], dtype=object)
     assert not contains_none(arr)
