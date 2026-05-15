@@ -9,6 +9,8 @@ from typing import TYPE_CHECKING
 import numpy as np
 import polars as pl
 
+from mlev.utils.array.shape import check_array_ndim
+
 if TYPE_CHECKING:
     from mlev.typing import ArrayLike
 
@@ -81,7 +83,5 @@ def to_numpy_1d(x: ArrayLike, name: str = "input") -> np.ndarray:
         ```
     """
     arr = to_numpy(x, name=name)
-    if arr.ndim != 1:
-        msg = f"{name}: expected 1D array, got shape {arr.shape}"
-        raise ValueError(msg)
+    check_array_ndim(arr, ndim=1, name=name)
     return arr
