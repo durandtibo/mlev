@@ -110,9 +110,6 @@ def is_missing(arr: np.ndarray) -> np.ndarray:
         A boolean array. ``True`` where the value is missing (``NaN`` or
         ``None``), ``False`` otherwise.
 
-    Raises:
-        ValueError: if ``arr`` is empty.
-
     Example:
         ```pycon
         >>> import numpy as np

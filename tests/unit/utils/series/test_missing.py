@@ -223,8 +223,9 @@ def test_is_missing_dtypes_no_null(series: pl.Series) -> None:
 
 
 def test_is_missing_empty_series_raises() -> None:
-    with pytest.raises(ValueError, match="'series' cannot be empty"):
-        is_missing(pl.Series("x", [], dtype=pl.Int64))
+    assert is_missing(pl.Series("x", [], dtype=pl.Int64)).equals(
+        pl.Series("is_missing", [], dtype=pl.Boolean)
+    )
 
 
 def test_is_missing_single_element_null() -> None:
