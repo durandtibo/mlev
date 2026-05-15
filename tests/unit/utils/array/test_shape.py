@@ -21,5 +21,10 @@ def test_check_array_ndim_2(shape: tuple[int, ...]) -> None:
 
 
 def test_check_array_ndim_incorrect() -> None:
-    with pytest.raises(ValueError, match="Incorrect number of array dimensions"):
+    with pytest.raises(ValueError, match="input: expected 3D array"):
         check_array_ndim(np.ones((2, 3)), ndim=3)
+
+
+def test_check_array_ndim_incorrect_custom_name() -> None:
+    with pytest.raises(ValueError, match="predictions: expected 4D array"):
+        check_array_ndim(np.ones((2, 3)), ndim=4, name="predictions")

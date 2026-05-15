@@ -95,16 +95,21 @@ def test_to_numpy_1d_2d_array() -> None:
         to_numpy_1d(np.array([[1, 2], [3, 4]]))
 
 
-def test_to_numpy_1d_2d_array_custom_name() -> None:
-    with pytest.raises(ValueError, match="predictions: expected 1D array"):
-        to_numpy_1d(np.array([[1, 2], [3, 4]]), name="predictions")
-
-
 def test_to_numpy_1d_0d_array() -> None:
     with pytest.raises(ValueError, match="input: expected 1D array"):
         to_numpy_1d(np.array(1))
 
 
+def test_to_numpy_1d_2d_array_custom_name() -> None:
+    with pytest.raises(ValueError, match="predictions: expected 1D array"):
+        to_numpy_1d(np.array([[1, 2], [3, 4]]), name="predictions")
+
+
 def test_to_numpy_1d_unsupported_type() -> None:
     with pytest.raises(TypeError, match="input: unsupported type"):
         to_numpy_1d({"a": 1})
+
+
+def test_to_numpy_1d_unsupported_type_custom_names() -> None:
+    with pytest.raises(TypeError, match="predictions: unsupported type"):
+        to_numpy_1d({"a": 1}, name="predictions")
