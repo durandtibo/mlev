@@ -2,11 +2,13 @@ r"""Utilities to validate array shapes and dimensions."""
 
 from __future__ import annotations
 
-__all__ = ["check_array_ndim"]
+__all__ = ["check_array_ndim", "check_same_shape"]
 
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
+    from collections.abc import Iterable
+
     import numpy as np
 
 
@@ -33,3 +35,28 @@ def check_array_ndim(arr: np.ndarray, ndim: int, name: str = "input") -> None:
     if arr.ndim != ndim:
         msg = f"{name}: expected {ndim}D array, got shape {arr.shape}"
         raise ValueError(msg)
+
+
+def check_same_shape(arrays: Iterable[np.ndarray]) -> None:
+    r"""Check if arrays have the same shape.
+
+    Args:
+        arrays: The arrays to check.
+
+    Raises:
+        RuntimeError: if the arrays have different shapes.
+
+    Example usage:
+
+    ```pycon
+
+    >>> import numpy as np
+    >>> from mlev.utils.array import check_same_shape
+    >>> check_same_shape([np.array([1, 0, 0, 1]), np.array([0, 1, 0, 1])])
+
+    ```
+    """
+    shapes = {arr.shape for arr in arrays}
+    if len(shapes) > 1:
+        msg = f"arrays have different shapes: {shapes}"
+        raise RuntimeError(msg)
