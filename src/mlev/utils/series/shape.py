@@ -25,7 +25,7 @@ def check_same_shape(series: Iterable[pl.Series]) -> None:
 
     ```pycon
 
-    >>> import numpy as np
+    >>> import polars as pl
     >>> from mlev.utils.series import check_same_shape
     >>> check_same_shape([pl.Series("col", [1, 0, 0, 1]), pl.Series("col", [0, 1, 0, 1])])
 
