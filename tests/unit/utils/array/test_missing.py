@@ -4,7 +4,12 @@ import numpy as np
 import pytest
 from coola.equality import objects_are_equal
 
-from mlev.utils.array import contains_missing, contains_none, is_missing
+from mlev.utils.array import (
+    contains_missing,
+    contains_none,
+    is_missing,
+    multi_is_missing,
+)
 
 ######################################
 #     Tests for contains_missing     #
@@ -408,3 +413,190 @@ def test_is_missing_2d_preserves_shape() -> None:
 def test_is_missing_empty_array(dtype: type) -> None:
     result = is_missing(np.array([], dtype=dtype))
     assert objects_are_equal(result, np.array([], dtype=bool))
+
+
+##################################
+#   Tests for multi_is_missing   #
+##################################
+
+
+# --- Single array ---
+
+
+def test_multi_is_missing_single_array_no_missing() -> None:
+    assert objects_are_equal(
+        multi_is_missing([np.array([1.0, 2.0, 3.0])]),
+        np.array([False, False, False], dtype=bool),
+    )
+
+
+def test_multi_is_missing_single_array_with_nan() -> None:
+    assert objects_are_equal(
+        multi_is_missing([np.array([1.0, float("nan"), 3.0])]),
+        np.array([False, True, False], dtype=bool),
+    )
+
+
+def test_multi_is_missing_single_array_with_none() -> None:
+    assert objects_are_equal(
+        multi_is_missing([np.array([1, None, 3], dtype=object)]),
+        np.array([False, True, False], dtype=bool),
+    )
+
+
+def test_multi_is_missing_single_array_all_missing() -> None:
+    assert objects_are_equal(
+        multi_is_missing([np.array([float("nan"), float("nan")])]),
+        np.array([True, True], dtype=bool),
+    )
+
+
+# --- Multiple arrays ---
+
+
+def test_multi_is_missing_two_arrays_no_missing() -> None:
+    assert objects_are_equal(
+        multi_is_missing([np.array([1.0, 2.0, 3.0]), np.array([4.0, 5.0, 6.0])]),
+        np.array([False, False, False], dtype=bool),
+    )
+
+
+def test_multi_is_missing_two_arrays_first_has_missing() -> None:
+    assert objects_are_equal(
+        multi_is_missing([np.array([1.0, float("nan"), 3.0]), np.array([4.0, 5.0, 6.0])]),
+        np.array([False, True, False], dtype=bool),
+    )
+
+
+def test_multi_is_missing_two_arrays_second_has_missing() -> None:
+    assert objects_are_equal(
+        multi_is_missing([np.array([1.0, 2.0, 3.0]), np.array([4.0, float("nan"), 6.0])]),
+        np.array([False, True, False], dtype=bool),
+    )
+
+
+def test_multi_is_missing_two_arrays_both_have_missing() -> None:
+    assert objects_are_equal(
+        multi_is_missing([np.array([1.0, float("nan"), 3.0]), np.array([float("nan"), 5.0, 6.0])]),
+        np.array([True, True, False], dtype=bool),
+    )
+
+
+def test_multi_is_missing_two_arrays_missing_overlap() -> None:
+    assert objects_are_equal(
+        multi_is_missing([np.array([1.0, float("nan"), 3.0]), np.array([4.0, float("nan"), 6.0])]),
+        np.array([False, True, False], dtype=bool),
+    )
+
+
+def test_multi_is_missing_three_arrays() -> None:
+    assert objects_are_equal(
+        multi_is_missing(
+            [
+                np.array([1.0, float("nan"), 3.0]),
+                np.array([4.0, 5.0, float("nan")]),
+                np.array([float("nan"), 8.0, 9.0]),
+            ]
+        ),
+        np.array([True, True, True], dtype=bool),
+    )
+
+
+# --- Mixed object arrays with None and NaN ---
+
+
+def test_multi_is_missing_object_none_and_nan() -> None:
+    assert objects_are_equal(
+        multi_is_missing(
+            [
+                np.array([1, None, 3], dtype=object),
+                np.array([float("nan"), 2, 3], dtype=object),
+            ]
+        ),
+        np.array([True, True, False], dtype=bool),
+    )
+
+
+def test_multi_is_missing_object_no_missing() -> None:
+    assert objects_are_equal(
+        multi_is_missing([np.array([1, 2, 3], dtype=object), np.array([4, 5, 6], dtype=object)]),
+        np.array([False, False, False], dtype=bool),
+    )
+
+
+# --- Non-numeric dtypes ---
+
+
+def test_multi_is_missing_str_arrays() -> None:
+    assert objects_are_equal(
+        multi_is_missing([np.array(["a", "b", "c"]), np.array(["d", "e", "f"])]),
+        np.array([False, False, False], dtype=bool),
+    )
+
+
+def test_multi_is_missing_datetime_arrays() -> None:
+    assert objects_are_equal(
+        multi_is_missing(
+            [
+                np.array(["2021-01-01", "2021-01-02"], dtype="datetime64"),
+                np.array(["2021-01-03", "2021-01-04"], dtype="datetime64"),
+            ]
+        ),
+        np.array([False, False], dtype=bool),
+    )
+
+
+# --- Return dtype ---
+
+
+def test_multi_is_missing_returns_bool_dtype() -> None:
+    assert multi_is_missing([np.array([1.0, float("nan")])]).dtype == bool
+
+
+def test_multi_is_missing_object_returns_bool_dtype() -> None:
+    assert multi_is_missing([np.array([1, None], dtype=object)]).dtype == bool
+
+
+# --- Multidimensional arrays ---
+
+
+def test_multi_is_missing_2d_with_nan() -> None:
+    assert objects_are_equal(
+        multi_is_missing(
+            [
+                np.array([[1.0, float("nan")], [3.0, 4.0]]),
+                np.array([[float("nan"), 2.0], [3.0, 4.0]]),
+            ]
+        ),
+        np.array([[True, True], [False, False]], dtype=bool),
+    )
+
+
+def test_multi_is_missing_2d_preserves_shape() -> None:
+    arrays = [
+        np.array([[1.0, float("nan")], [3.0, 4.0]]),
+        np.array([[5.0, 6.0], [float("nan"), 8.0]]),
+    ]
+    assert multi_is_missing(arrays).shape == arrays[0].shape
+
+
+# --- Edge cases ---
+
+
+def test_multi_is_missing_empty_raises() -> None:
+    with pytest.raises(ValueError, match="'arrays' cannot be empty"):
+        multi_is_missing([])
+
+
+def test_multi_is_missing_single_element_missing() -> None:
+    assert objects_are_equal(
+        multi_is_missing([np.array([float("nan")])]),
+        np.array([True], dtype=bool),
+    )
+
+
+def test_multi_is_missing_single_element_no_missing() -> None:
+    assert objects_are_equal(
+        multi_is_missing([np.array([1.0])]),
+        np.array([False], dtype=bool),
+    )

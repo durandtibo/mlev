@@ -7,13 +7,17 @@ There are two ways to represent missing values:
 
 from __future__ import annotations
 
-__all__ = ["contains_missing", "contains_none", "is_missing"]
+__all__ = ["contains_missing", "contains_none", "is_missing", "multi_is_missing"]
 
+from typing import TYPE_CHECKING
 
 import numpy as np
 
 from mlev.utils.array.nan import contains_nan
 from mlev.utils.missing import check_missing_policy
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
 
 
 def contains_missing(
@@ -131,3 +135,43 @@ def is_missing(arr: np.ndarray) -> np.ndarray:
     except TypeError:
         # Non-numeric dtypes (e.g. datetime64, str) cannot be missing
         return np.zeros(arr.shape, dtype=bool)
+
+
+def multi_is_missing(arrays: Sequence[np.ndarray]) -> np.ndarray:
+    r"""Test element-wise for missing values for all input arrays and
+    return result as a boolean array.
+
+    A value is considered missing if it is ``NaN`` or ``None``.
+
+    Args:
+        arrays: The input arrays to test. All the arrays must have the
+            same shape.
+
+    Returns:
+        A boolean array. ``True`` where any array has a missing value,
+        ``False`` otherwise.
+
+    Raises:
+        ValueError: if ``arrays`` is empty.
+
+    Example:
+        ```pycon
+        >>> import numpy as np
+        >>> from mlev.utils.array import multi_is_missing
+        >>> mask = multi_is_missing(
+        ...     [np.array([1, 0, 0, 1, np.nan]), np.array([1, np.nan, 0, 1, 1])]
+        ... )
+        >>> mask
+        array([False,  True, False, False,  True])
+        >>> mask = multi_is_missing(
+        ...     [np.array([1, None, 0], dtype=object), np.array([None, 2, 0], dtype=object)]
+        ... )
+        >>> mask
+        array([ True,  True, False])
+
+        ```
+    """
+    if len(arrays) == 0:
+        msg = "'arrays' cannot be empty"
+        raise ValueError(msg)
+    return np.logical_or.reduce([is_missing(a) for a in arrays])
