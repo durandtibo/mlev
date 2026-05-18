@@ -6,8 +6,6 @@ from mlev.functional.array import accuracy
 from mlev.results import AccuracyResult
 from mlev.typing import ArrayLike
 
-MISSING_POLICIES = ["omit", "propagate", "raise"]
-
 ##############################
 #     Tests for accuracy     #
 ##############################
