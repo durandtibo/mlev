@@ -54,7 +54,7 @@ def check_same_shape(arrays: Iterable[np.ndarray]) -> None:
 
         ```
     """
-    shapes = {arr.shape for arr in arrays}
-    if len(shapes) > 1:
+    shapes = [arr.shape for arr in arrays]
+    if len(set(shapes)) > 1:
         msg = f"arrays have different shapes: {shapes}"
         raise ValueError(msg)
