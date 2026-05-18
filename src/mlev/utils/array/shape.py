@@ -46,15 +46,13 @@ def check_same_shape(arrays: Iterable[np.ndarray]) -> None:
     Raises:
         ValueError: if the arrays have different shapes.
 
-    Example usage:
+    Example:
+        ```pycon
+        >>> import numpy as np
+        >>> from mlev.utils.array import check_same_shape
+        >>> check_same_shape([np.array([1, 0, 0, 1]), np.array([0, 1, 0, 1])])
 
-    ```pycon
-
-    >>> import numpy as np
-    >>> from mlev.utils.array import check_same_shape
-    >>> check_same_shape([np.array([1, 0, 0, 1]), np.array([0, 1, 0, 1])])
-
-    ```
+        ```
     """
     shapes = {arr.shape for arr in arrays}
     if len(shapes) > 1:
