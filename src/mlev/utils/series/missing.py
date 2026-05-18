@@ -2,12 +2,12 @@ r"""Utilities to inspect ``polars.Series`` with missing values."""
 
 from __future__ import annotations
 
-__all__ = ["contains_missing", "is_missing"]
+__all__ = ["contains_missing", "is_missing", "multi_is_missing"]
 
 import functools
 from typing import TYPE_CHECKING
 
-from mlev.utils.missing import check_missing_policy
+from mlev.utils.missing import MissingPolicy, check_missing_policy
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     import polars as pl
 
 
-def contains_missing(series: pl.Series, missing_policy: str = "propagate") -> bool:
+def contains_missing(series: pl.Series, missing_policy: MissingPolicy = "propagate") -> bool:
     r"""Indicate if the given series contains at least one missing value.
 
     Missing values are represented by ``None``.

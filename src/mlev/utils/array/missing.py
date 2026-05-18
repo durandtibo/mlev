@@ -14,14 +14,14 @@ from typing import TYPE_CHECKING
 import numpy as np
 
 from mlev.utils.array.nan import contains_nan
-from mlev.utils.missing import check_missing_policy
+from mlev.utils.missing import MissingPolicy, check_missing_policy
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
 
 def contains_missing(
-    arr: np.ndarray, missing_policy: str = "propagate", name: str = "input"
+    arr: np.ndarray, missing_policy: MissingPolicy = "propagate", name: str = "input"
 ) -> bool:
     r"""Indicate if the given array contains at least one missing value.
 

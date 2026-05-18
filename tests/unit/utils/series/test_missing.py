@@ -4,7 +4,7 @@ import polars as pl
 import pytest
 from polars.testing import assert_series_equal
 
-from mlev.utils.missing import MISSING_POLICIES
+from mlev.utils.missing import MISSING_POLICIES, MissingPolicy
 from mlev.utils.series import contains_missing, is_missing, multi_is_missing
 
 ######################################
@@ -33,7 +33,7 @@ from mlev.utils.series import contains_missing, is_missing, multi_is_missing
         ),
     ],
 )
-def test_contains_missing_no_missing(series: pl.Series, missing_policy: str) -> None:
+def test_contains_missing_no_missing(series: pl.Series, missing_policy: MissingPolicy) -> None:
     assert not contains_missing(series, missing_policy=missing_policy)
 
 
@@ -82,7 +82,9 @@ def test_contains_missing_raise_series_name() -> None:
         pytest.param(pl.Series("col", [1.0, float("nan"), 3.0], dtype=pl.Float64), id="float64"),
     ],
 )
-def test_contains_missing_nan_is_not_missing(series: pl.Series, missing_policy: str) -> None:
+def test_contains_missing_nan_is_not_missing(
+    series: pl.Series, missing_policy: MissingPolicy
+) -> None:
     assert not contains_missing(series, missing_policy=missing_policy)
 
 
