@@ -6,7 +6,7 @@ from dataclasses import FrozenInstanceError
 import pytest
 from coola.equality import objects_are_equal
 
-from mlev.results.classification import AccuracyResult
+from mlev.results import AccuracyResult
 
 ####################################
 #     Tests for AccuracyResult     #
