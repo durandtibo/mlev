@@ -19,7 +19,7 @@ def test_check_same_shape_2_series_correct() -> None:
 
 
 def test_check_same_shape_2_series_incorrect() -> None:
-    with pytest.raises(RuntimeError, match="series have different shapes"):
+    with pytest.raises(ValueError, match="series have different shapes"):
         check_same_shape([pl.Series("col", [1, 0, 0, 1, 1]), pl.Series("col", [1, 0, 0, 1])])
 
 
@@ -34,7 +34,7 @@ def test_check_same_shape_3_series_correct() -> None:
 
 
 def test_check_same_shape_3_series_incorrect() -> None:
-    with pytest.raises(RuntimeError, match="series have different shapes"):
+    with pytest.raises(ValueError, match="series have different shapes"):
         check_same_shape(
             [
                 pl.Series("col", [1, 0, 0, 1, 1]),

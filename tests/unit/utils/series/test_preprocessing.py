@@ -153,7 +153,7 @@ def test_preprocess_pred_drop_missing_dtypes(y_true: pl.Series, y_pred: pl.Serie
 
 
 def test_preprocess_pred_different_shapes_raises() -> None:
-    with pytest.raises(RuntimeError, match="series have different shapes:"):
+    with pytest.raises(ValueError, match="series have different shapes:"):
         preprocess_pred(
             pl.Series("y_true", [1, 0, 0]),
             pl.Series("y_pred", [0, 1]),
@@ -161,7 +161,7 @@ def test_preprocess_pred_different_shapes_raises() -> None:
 
 
 def test_preprocess_pred_different_shapes_drop_raises() -> None:
-    with pytest.raises(RuntimeError, match="series have different shapes:"):
+    with pytest.raises(ValueError, match="series have different shapes:"):
         preprocess_pred(
             pl.Series("y_true", [1, 0, 0]),
             pl.Series("y_pred", [0, 1]),

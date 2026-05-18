@@ -19,7 +19,7 @@ def check_same_shape(series: Iterable[pl.Series]) -> None:
         series: The series to check.
 
     Raises:
-        RuntimeError: if the series have different shapes.
+        ValueError: if the series have different shapes.
 
     Example usage:
 
@@ -34,4 +34,4 @@ def check_same_shape(series: Iterable[pl.Series]) -> None:
     shapes = {arr.shape for arr in series}
     if len(shapes) > 1:
         msg = f"series have different shapes: {shapes}"
-        raise RuntimeError(msg)
+        raise ValueError(msg)
