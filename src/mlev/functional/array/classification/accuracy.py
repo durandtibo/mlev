@@ -144,9 +144,8 @@ def _accuracy_array(
         ValueError: if ``y_pred`` contains missing values and
             ``missing_policy`` is ``'raise'``.
     """
-    y_true, y_pred = array.preprocess_pred(
-        y_true=to_numpy_1d(y_true),
-        y_pred=to_numpy_1d(y_pred),
+    y_true, y_pred = array.preprocess(
+        [to_numpy_1d(y_true), to_numpy_1d(y_pred)],
         drop_missing=missing_policy == "omit",
     )
     # When missing_policy is 'propagate' or 'raise', check for missing
