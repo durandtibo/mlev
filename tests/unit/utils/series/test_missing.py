@@ -233,7 +233,9 @@ def test_is_missing_empty_series_raises() -> None:
 
 
 def test_is_missing_single_element_null() -> None:
-    assert_series_equal(is_missing(pl.Series("x", [None], dtype=pl.Int64)), pl.Series("is_missing", [True]))
+    assert_series_equal(
+        is_missing(pl.Series("x", [None], dtype=pl.Int64)), pl.Series("is_missing", [True])
+    )
 
 
 def test_is_missing_single_element_no_null() -> None:
@@ -250,13 +252,15 @@ def test_is_missing_single_element_no_null() -> None:
 
 def test_multi_is_missing_single_series_no_null() -> None:
     assert_series_equal(
-        multi_is_missing([pl.Series("x", [1, 2, 3])]), pl.Series("is_missing", [False, False, False])
+        multi_is_missing([pl.Series("x", [1, 2, 3])]),
+        pl.Series("is_missing", [False, False, False]),
     )
 
 
 def test_multi_is_missing_single_series_with_null() -> None:
     assert_series_equal(
-        multi_is_missing([pl.Series("x", [1, None, 3])]), pl.Series("is_missing", [False, True, False])
+        multi_is_missing([pl.Series("x", [1, None, 3])]),
+        pl.Series("is_missing", [False, True, False]),
     )
 
 
