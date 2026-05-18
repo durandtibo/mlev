@@ -7,9 +7,9 @@ __all__ = [
     "contains_missing",
     "is_missing",
     "multi_is_missing",
-    "preprocess_pred",
+    "preprocess",
 ]
 
 from mlev.utils.series.missing import contains_missing, is_missing, multi_is_missing
-from mlev.utils.series.preprocessing import preprocess_pred
+from mlev.utils.series.preprocessing import preprocess
 from mlev.utils.series.shape import check_same_shape

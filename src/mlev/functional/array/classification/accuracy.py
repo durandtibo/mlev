@@ -189,9 +189,8 @@ def _accuracy_series(
         ValueError: if ``y_pred`` contains missing values and
             ``missing_policy`` is ``'raise'``.
     """
-    y_true, y_pred = series.preprocess_pred(
-        y_true=y_true,
-        y_pred=y_pred,
+    y_true, y_pred = series.preprocess(
+        [y_true, y_pred],
         drop_missing=missing_policy == "omit",
     )
     # When missing_policy is 'propagate' or 'raise', check for missing
