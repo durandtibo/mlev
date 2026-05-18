@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 def preprocess_pred(
     y_true: pl.Series, y_pred: pl.Series, drop_missing: bool = False
 ) -> tuple[pl.Series, pl.Series]:
-    r"""Preprocess ``y_true`` and ``y_pred`` arrays.
+    r"""Preprocess ``y_true`` and ``y_pred`` series.
 
     Args:
         y_true: The ground truth target labels.
@@ -26,14 +26,13 @@ def preprocess_pred(
 
     Returns:
         A tuple with the preprocessed ``y_true`` and ``y_pred``
-            arrays.
+            series.
 
     Raises:
         ValueError: if ``'y_true'`` and ``'y_pred'`` have different
             shapes.
 
-    Example:
-        ```pycon
+    Examples:
         >>> import polars as pl
         >>> from mlev.utils.series import preprocess_pred
         >>> y_true = pl.Series("y_true", [1, 0, 0, 1, 1, None])
@@ -74,8 +73,6 @@ def preprocess_pred(
             0
             1
         ])
-
-        ```
     """
     check_same_shape([y_true, y_pred])
     if not drop_missing:

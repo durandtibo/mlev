@@ -22,12 +22,9 @@ def check_nan_policy(nan_policy: str) -> None:
         ValueError: if ``nan_policy`` is not ``'omit'``,
             ``'propagate'``, or ``'raise'``.
 
-    Example:
-        ```pycon
+    Examples:
         >>> from mlev.utils.array import check_nan_policy
         >>> check_nan_policy(nan_policy="omit")
-
-        ```
     """
     if nan_policy not in set(NAN_POLICIES):
         msg = (
@@ -54,8 +51,7 @@ def contains_nan(arr: np.ndarray, nan_policy: NanPolicy = "propagate", name: str
         ValueError: if the array contains at least one NaN value and
             ``nan_policy`` is ``'raise'``.
 
-    Example:
-        ```pycon
+    Examples:
         >>> import numpy as np
         >>> from mlev.utils.array import contains_nan
         >>> contains_nan(np.array([1, 2, 3]))
@@ -66,8 +62,6 @@ def contains_nan(arr: np.ndarray, nan_policy: NanPolicy = "propagate", name: str
         True
         >>> contains_nan(np.array(["a", "b", "c"]))
         False
-
-        ```
     """
     check_nan_policy(nan_policy)
     if arr.dtype == object:

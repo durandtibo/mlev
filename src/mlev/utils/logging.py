@@ -29,13 +29,10 @@ def configure_logging(level: int = logging.INFO) -> None:
         level: The minimum log level to capture. Defaults to
             ``logging.INFO``.
 
-    Example:
-        ```pycon
+    Examples:
         >>> import logging
         >>> from mlev.utils.logging import configure_logging
         >>> configure_logging(level=logging.DEBUG)
-
-        ```
     """
     if not is_colorlog_available():
         logging.basicConfig(level=level)
@@ -87,12 +84,9 @@ def log_dict_pretty(
         title: Optional panel title when ``rich`` is available, and a
             text prefix when ``rich`` is unavailable.
 
-    Example:
-        ```pycon
+    Examples:
         >>> from mlev.utils.logging import log_dict_pretty
         >>> log_dict_pretty({"accuracy": 0.75}, title="Validation")
-
-        ```
     """
     if is_rich_available():
         console = Console()

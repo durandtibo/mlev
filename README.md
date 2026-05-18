@@ -53,4 +53,28 @@
     <br/>
 </p>
 
-Library to evaluate ML models
+mlev is a lightweight library to evaluate machine-learning predictions.
+
+## Install
+
+```bash
+pip install mlev
+```
+
+## Quick start
+
+```python
+import numpy as np
+from mlev.results import AccuracyResult
+from mlev.utils.array import preprocess_pred
+
+y_true = np.array([1, 0, 1, np.nan])
+y_pred = np.array([1, 1, 1, 0])
+y_true_clean, y_pred_clean = preprocess_pred(y_true, y_pred, drop_missing=True)
+
+result = AccuracyResult(
+    num_correct_predictions=int((y_true_clean == y_pred_clean).sum()),
+    num_predictions=int(y_true_clean.size),
+)
+print(result.to_str())
+```

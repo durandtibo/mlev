@@ -33,16 +33,13 @@ def to_numpy(x: ArrayLike, name: str = "input") -> np.ndarray:
     Raises:
         TypeError: If ``x`` is not a supported array-like type.
 
-    Example:
-        ```pycon
+    Examples:
         >>> import numpy as np
         >>> from mlev.utils.array import to_numpy
         >>> to_numpy([1, 2, 3])
         array([1, 2, 3])
         >>> to_numpy((1, 2, 3))
         array([1, 2, 3])
-
-        ```
     """
     if isinstance(x, np.ndarray):
         return x
@@ -73,14 +70,11 @@ def to_numpy_1d(x: ArrayLike, name: str = "input") -> np.ndarray:
         ValueError: If ``x`` does not have exactly one dimension after
             conversion.
 
-    Example:
-        ```pycon
+    Examples:
         >>> import numpy as np
         >>> from mlev.utils.array import to_numpy_1d
         >>> to_numpy_1d([1, 2, 3])
         array([1, 2, 3])
-
-        ```
     """
     arr = to_numpy(x, name=name)
     check_array_ndim(arr, ndim=1, name=name)

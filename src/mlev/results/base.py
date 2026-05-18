@@ -16,16 +16,13 @@ if TYPE_CHECKING:
 class BaseResult(ABC):
     r"""Base class for immutable metric result containers.
 
-    Example:
-        ```pycon
+    Examples:
         >>> from mlev.results import AccuracyResult
         >>> m = AccuracyResult(num_correct_predictions=7, num_predictions=10)
         >>> m
         AccuracyResult(num_correct_predictions=7, num_predictions=10)
         >>> m.to_dict()
         {'accuracy': 0.7, 'num_correct_predictions': 7, 'num_predictions': 10}
-
-        ```
     """
 
     @abstractmethod
@@ -36,10 +33,9 @@ class BaseResult(ABC):
             other: The value to combine with.
 
         Returns:
-            The combined result of the two objects.
+            The combined result.
 
-        Example:
-            ```pycon
+        Examples:
             >>> from mlev.results import AccuracyResult
             >>> m1 = AccuracyResult(num_correct_predictions=7, num_predictions=10)
             >>> m2 = AccuracyResult(num_correct_predictions=3, num_predictions=10)
@@ -50,8 +46,6 @@ class BaseResult(ABC):
             [██████████░░░░░░░░░░]  0.5000  (10/20)
             >>> m.to_dict()
             {'accuracy': 0.5, 'num_correct_predictions': 10, 'num_predictions': 20}
-
-            ```
         """
 
     @abstractmethod
@@ -73,11 +67,9 @@ class BaseResult(ABC):
                 as equal.
 
         Returns:
-            ``True`` if the two objects are (element-wise) equal within a
-                tolerance, otherwise ``False``
+            ``True`` if both results are numerically close, otherwise ``False``.
 
-        Example:
-            ```pycon
+        Examples:
             >>> from mlev.results import AccuracyResult
             >>> m1 = AccuracyResult(num_correct_predictions=7, num_predictions=10)
             >>> m2 = AccuracyResult(num_correct_predictions=7, num_predictions=10)
@@ -86,8 +78,6 @@ class BaseResult(ABC):
             True
             >>> m1.allclose(m3)
             False
-
-            ```
         """
 
     @abstractmethod
@@ -100,10 +90,9 @@ class BaseResult(ABC):
                 NaN's in both objects will be considered equal.
 
         Returns:
-            ``True`` if the two objects are equal, otherwise ``False``
+            ``True`` if the two results are equal, otherwise ``False``.
 
-        Example:
-            ```pycon
+        Examples:
             >>> from mlev.results import AccuracyResult
             >>> m1 = AccuracyResult(num_correct_predictions=7, num_predictions=10)
             >>> m2 = AccuracyResult(num_correct_predictions=7, num_predictions=10)
@@ -112,8 +101,6 @@ class BaseResult(ABC):
             True
             >>> m1.equal(m3)
             False
-
-            ```
         """
 
     @abstractmethod
@@ -127,14 +114,11 @@ class BaseResult(ABC):
         Returns:
             The dictionary representation of the result.
 
-        Example:
-            ```pycon
+        Examples:
             >>> from mlev.results import AccuracyResult
             >>> m = AccuracyResult(num_correct_predictions=7, num_predictions=10)
             >>> m.to_dict()
             {'accuracy': 0.7, 'num_correct_predictions': 7, 'num_predictions': 10}
-
-            ```
         """
 
 

@@ -23,8 +23,7 @@ class AccuracyResult(BaseResult):
             because of missing values.
         num_predictions: The number of predictions.
 
-    Example:
-        ```pycon
+    Examples:
         >>> from mlev.results import AccuracyResult
         >>> m = AccuracyResult(num_correct_predictions=7, num_predictions=10)
         >>> m
@@ -33,8 +32,6 @@ class AccuracyResult(BaseResult):
         {'accuracy': 0.7, 'num_correct_predictions': 7, 'num_predictions': 10}
         >>> print(m.to_str())
         [██████████████░░░░░░]  0.7000  (7/10)
-
-        ```
     """
 
     num_correct_predictions: int | float

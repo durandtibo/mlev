@@ -24,13 +24,10 @@ def check_array_ndim(arr: np.ndarray, ndim: int, name: str = "input") -> None:
     Raises:
         ValueError: If ``arr.ndim`` is different from ``ndim``.
 
-    Example:
-        ```pycon
+    Examples:
         >>> import numpy as np
         >>> from mlev.utils.array import check_array_ndim
         >>> check_array_ndim(np.ones((2, 3)), ndim=2)
-
-        ```
     """
     if arr.ndim != ndim:
         msg = f"{name}: expected {ndim}D array, got shape {arr.shape}"
@@ -46,13 +43,10 @@ def check_same_shape(arrays: Iterable[np.ndarray]) -> None:
     Raises:
         ValueError: if the arrays have different shapes.
 
-    Example:
-        ```pycon
+    Examples:
         >>> import numpy as np
         >>> from mlev.utils.array import check_same_shape
         >>> check_same_shape([np.array([1, 0, 0, 1]), np.array([0, 1, 0, 1])])
-
-        ```
     """
     shapes = [arr.shape for arr in arrays]
     if len(set(shapes)) > 1:

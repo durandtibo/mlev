@@ -30,8 +30,7 @@ def preprocess_pred(
         ValueError: if ``'y_true'`` and ``'y_pred'`` have different
             shapes.
 
-    Example:
-        ```pycon
+    Examples:
         >>> import numpy as np
         >>> from mlev.utils.array import preprocess_pred
         >>> y_true = np.array([1, 0, 0, 1, 1, np.nan])
@@ -40,8 +39,6 @@ def preprocess_pred(
         (array([ 1.,  0.,  0.,  1.,  1., nan]), array([ 0.,  1.,  0.,  1., nan,  1.]))
         >>> preprocess_pred(y_true, y_pred, drop_missing=True)
         (array([1., 0., 0., 1.]), array([0., 1., 0., 1.]))
-
-        ```
     """
     check_same_shape([y_true, y_pred])
     if not drop_missing:

@@ -21,13 +21,10 @@ def check_same_shape(series: Iterable[pl.Series]) -> None:
     Raises:
         ValueError: if the series have different shapes.
 
-    Example:
-        ```pycon
+    Examples:
         >>> import polars as pl
         >>> from mlev.utils.series import check_same_shape
         >>> check_same_shape([pl.Series("x", [1, 0, 0, 1]), pl.Series("y", [0, 1, 0, 1])])
-
-        ```
     """
     shapes = [arr.shape for arr in series]
     if len(set(shapes)) > 1:

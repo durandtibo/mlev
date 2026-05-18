@@ -21,12 +21,9 @@ def check_missing_policy(missing_policy: str) -> None:
         ValueError: If ``missing_policy`` is not one of
             :obj:`mlev.utils.missing.MISSING_POLICIES`.
 
-    Example:
-        ```pycon
+    Examples:
         >>> from mlev.utils.missing import check_missing_policy
         >>> check_missing_policy(missing_policy="omit")
-
-        ```
     """
     if missing_policy not in set(MISSING_POLICIES):
         msg = (

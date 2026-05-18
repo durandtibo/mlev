@@ -30,16 +30,13 @@ def check_rich() -> None:
     Raises:
         RuntimeError: if the ``rich`` package is not installed.
 
-    Example:
-        ```pycon
+    Examples:
         >>> from mlev.utils.imports import check_rich
         >>> try:
         ...     check_rich()
         ... except RuntimeError:
         ...     pass
         ...
-
-        ```
     """
     if not is_rich_available():
         raise_rich_missing_error()
@@ -52,12 +49,9 @@ def is_rich_available() -> bool:
     Returns:
         ``True`` if ``rich`` is available otherwise ``False``.
 
-    Example:
-        ```pycon
+    Examples:
         >>> from mlev.utils.imports import is_rich_available
         >>> is_rich_available()
-
-        ```
     """
     return package_available("rich")
 
@@ -73,16 +67,13 @@ def rich_available(fn: F) -> F:
         A wrapper around ``fn``. When ``rich`` is unavailable, calling
             the wrapper returns ``None``.
 
-    Example:
-        ```pycon
+    Examples:
         >>> from mlev.utils.imports import rich_available
         >>> @rich_available
         ... def my_function(n: int = 0) -> int:
         ...     return 42 + n
         ...
         >>> my_function()
-
-        ```
     """
     return decorator_package_available(fn, is_rich_available)
 
@@ -95,8 +86,7 @@ def raise_rich_missing_error() -> NoReturn:
         RuntimeError: Always, with a message indicating that the
             ``rich`` package is not installed.
 
-    Example:
-        ```pycon
+    Examples:
         >>> from mlev.utils.imports import raise_rich_missing_error
         >>> try:
         ...     raise_rich_missing_error()
@@ -104,7 +94,5 @@ def raise_rich_missing_error() -> NoReturn:
         ...     "'rich' package is required" in str(e)
         ...
         True
-
-        ```
     """
     raise_package_missing_error("rich", "rich")

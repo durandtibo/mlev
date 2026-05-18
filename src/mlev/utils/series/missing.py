@@ -2,7 +2,7 @@ r"""Utilities to inspect ``polars.Series`` with missing values."""
 
 from __future__ import annotations
 
-__all__ = ["contains_missing", "is_missing"]
+__all__ = ["contains_missing", "is_missing", "multi_is_missing"]
 
 import functools
 from typing import TYPE_CHECKING
@@ -33,16 +33,13 @@ def contains_missing(x: pl.Series, missing_policy: str = "propagate") -> bool:
         ValueError: if the series contains at least one missing value and
             ``missing_policy`` is ``'raise'``.
 
-    Example:
-        ```pycon
+    Examples:
         >>> import polars as pl
         >>> from mlev.utils.series import contains_missing
         >>> contains_missing(pl.Series("col", [1, 2, 3]))
         False
         >>> contains_missing(pl.Series("col", [1, None, 3]))
         True
-
-        ```
     """
     check_missing_policy(missing_policy)
     has_missing = x.null_count() > 0
@@ -60,11 +57,10 @@ def is_missing(series: pl.Series, name: str = "is_missing") -> pl.Series:
         name: The name of the output boolean series. Defaults to ``'is_missing'``.
 
     Returns:
-        A boolean series. ``True`` where any series is null,
+        A boolean series. ``True`` where ``series`` is null,
         ``False`` otherwise.
 
-    Example:
-        ```pycon
+    Examples:
         >>> import polars as pl
         >>> from mlev.utils.series import is_missing
         >>> mask = is_missing(pl.Series("x", [1, 0, 0, 1, None]))
@@ -78,8 +74,6 @@ def is_missing(series: pl.Series, name: str = "is_missing") -> pl.Series:
            false
            true
         ]
-
-        ```
     """
     return series.is_null().alias(name)
 
@@ -100,8 +94,7 @@ def multi_is_missing(series: Sequence[pl.Series], name: str = "is_missing") -> p
     Raises:
         ValueError: if ``series`` is empty.
 
-    Example:
-        ```pycon
+    Examples:
         >>> import polars as pl
         >>> from mlev.utils.series import multi_is_missing
         >>> mask = multi_is_missing(
@@ -117,8 +110,6 @@ def multi_is_missing(series: Sequence[pl.Series], name: str = "is_missing") -> p
            false
            true
         ]
-
-        ```
     """
     if len(series) == 0:
         msg = "'series' cannot be empty"

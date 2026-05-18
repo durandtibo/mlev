@@ -30,16 +30,13 @@ def check_sklearn() -> None:
     Raises:
         RuntimeError: if the ``sklearn`` package is not installed.
 
-    Example:
-        ```pycon
+    Examples:
         >>> from mlev.utils.imports import check_sklearn
         >>> try:
         ...     check_sklearn()
         ... except RuntimeError:
         ...     pass
         ...
-
-        ```
     """
     if not is_sklearn_available():
         raise_sklearn_missing_error()
@@ -52,12 +49,9 @@ def is_sklearn_available() -> bool:
     Returns:
         ``True`` if ``sklearn`` is available otherwise ``False``.
 
-    Example:
-        ```pycon
+    Examples:
         >>> from mlev.utils.imports import is_sklearn_available
         >>> is_sklearn_available()
-
-        ```
     """
     return package_available("sklearn")
 
@@ -73,16 +67,13 @@ def sklearn_available(fn: F) -> F:
         A wrapper around ``fn``. When ``sklearn`` is unavailable, calling
             the wrapper returns ``None``.
 
-    Example:
-        ```pycon
+    Examples:
         >>> from mlev.utils.imports import sklearn_available
         >>> @sklearn_available
         ... def my_function(n: int = 0) -> int:
         ...     return 42 + n
         ...
         >>> my_function()
-
-        ```
     """
     return decorator_package_available(fn, is_sklearn_available)
 
@@ -95,8 +86,7 @@ def raise_sklearn_missing_error() -> NoReturn:
         RuntimeError: Always, with a message indicating that the
             ``sklearn`` package is not installed.
 
-    Example:
-        ```pycon
+    Examples:
         >>> from mlev.utils.imports import raise_sklearn_missing_error
         >>> try:
         ...     raise_sklearn_missing_error()
@@ -104,7 +94,5 @@ def raise_sklearn_missing_error() -> NoReturn:
         ...     "'sklearn' package is required" in str(e)
         ...
         True
-
-        ```
     """
     raise_package_missing_error("sklearn", "scikit-learn")

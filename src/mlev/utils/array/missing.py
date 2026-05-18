@@ -41,16 +41,13 @@ def contains_missing(
         ValueError: if the array contains at least one missing value and
             ``missing_policy`` is ``'raise'``.
 
-    Example:
-        ```pycon
+    Examples:
         >>> import numpy as np
         >>> from mlev.utils.array import contains_missing
         >>> bool(contains_missing(np.array([1, 2, 3])))
         False
         >>> bool(contains_missing(np.array([1, 2, np.nan])))
         True
-
-        ```
     """
     check_missing_policy(missing_policy)
     has_missing = contains_nan(arr)
@@ -82,8 +79,7 @@ def contains_none(arr: np.ndarray) -> bool:
     Returns:
         True if any element is None, False otherwise.
 
-    Example:
-        ```pycon
+    Examples:
         >>> import numpy as np
         >>> from mlev.utils.array import contains_none
         >>> contains_none(np.array([1, 2, 3]))
@@ -92,8 +88,6 @@ def contains_none(arr: np.ndarray) -> bool:
         True
         >>> contains_none(np.array(["a", None, "c"]))
         True
-
-        ```
     """
     try:
         return None in arr
@@ -114,16 +108,13 @@ def is_missing(arr: np.ndarray) -> np.ndarray:
         A boolean array. ``True`` where the value is missing (``NaN`` or
         ``None``), ``False`` otherwise.
 
-    Example:
-        ```pycon
+    Examples:
         >>> import numpy as np
         >>> from mlev.utils.array import is_missing
         >>> is_missing(np.array([1.0, 0.0, float("nan"), 1.0]))
         array([False, False,  True, False])
         >>> is_missing(np.array([1.0, 0.0, float("nan"), 1.0, None], dtype=object))
         array([False, False,  True, False,  True])
-
-        ```
     """
     if arr.dtype == object:
         return np.array(
@@ -154,8 +145,7 @@ def multi_is_missing(arrays: Sequence[np.ndarray]) -> np.ndarray:
     Raises:
         ValueError: if ``arrays`` is empty.
 
-    Example:
-        ```pycon
+    Examples:
         >>> import numpy as np
         >>> from mlev.utils.array import multi_is_missing
         >>> mask = multi_is_missing(
@@ -168,8 +158,6 @@ def multi_is_missing(arrays: Sequence[np.ndarray]) -> np.ndarray:
         ... )
         >>> mask
         array([ True,  True, False])
-
-        ```
     """
     if len(arrays) == 0:
         msg = "'arrays' cannot be empty"
