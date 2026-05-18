@@ -26,6 +26,38 @@ jobs:
         run: |
           python -c "import mlev"
 
+      # Test functional module imports
+      - name: check mlev.functional
+        run: |
+          python -c "from mlev import functional"
+      - name: check mlev.functional.array
+        run: |
+          python -c "from mlev.functional import array"
+      - name: check mlev.functional.frame
+        run: |
+          python -c "from mlev.functional import frame"
+
+      # Test metrics module imports
+      - name: check mlev.metrics
+        run: |
+          python -c "from mlev import metrics"
+      - name: check mlev.metrics.array
+        run: |
+          python -c "from mlev.metrics import array"
+      - name: check mlev.metrics.frame
+        run: |
+          python -c "from mlev.metrics import frame"
+
+      # Test result module imports
+      - name: check mlev.results
+        run: |
+          python -c "from mlev import results"
+
+      # Test testing module imports
+      - name: check mlev.testing
+        run: |
+          python -c "from mlev import testing"
+
       # Test utils module imports
       - name: check mlev.utils
         run: |
