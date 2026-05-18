@@ -13,6 +13,7 @@ __all__ = [
     "contains_none",
     "is_missing",
     "multi_is_missing",
+    "preprocess_pred",
     "to_numpy",
     "to_numpy_1d",
 ]
@@ -25,4 +26,5 @@ from mlev.utils.array.missing import (
     multi_is_missing,
 )
 from mlev.utils.array.nan import NAN_POLICIES, NanPolicy, check_nan_policy, contains_nan
+from mlev.utils.array.preprocessing import preprocess_pred
 from mlev.utils.array.shape import check_array_ndim, check_same_shape
