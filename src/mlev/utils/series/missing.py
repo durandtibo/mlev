@@ -15,14 +15,14 @@ if TYPE_CHECKING:
     import polars as pl
 
 
-def contains_missing(x: pl.Series, missing_policy: str = "propagate") -> bool:
+def contains_missing(series: pl.Series, missing_policy: str = "propagate") -> bool:
     r"""Indicate if the given series contains at least one missing value.
 
     Missing values are represented by ``None``.
     NaNs are not considered to be missing data in Polars.
 
     Args:
-        x: The series to check.
+        series: The series to check.
         missing_policy: The missing policy. The valid values are ``'omit'``,
             ``'propagate'``, or ``'raise'``.
 
@@ -45,9 +45,9 @@ def contains_missing(x: pl.Series, missing_policy: str = "propagate") -> bool:
         ```
     """
     check_missing_policy(missing_policy)
-    has_missing = x.null_count() > 0
+    has_missing = series.null_count() > 0
     if has_missing and missing_policy == "raise":
-        msg = f"{x.name} contains at least one missing value"
+        msg = f"{series.name} contains at least one missing value"
         raise ValueError(msg)
     return has_missing
 
