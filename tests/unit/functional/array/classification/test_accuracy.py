@@ -1,10 +1,16 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 import numpy as np
 import polars as pl
 import pytest
 
 from mlev.functional.array import accuracy
 from mlev.results import AccuracyResult
-from mlev.typing import ArrayLike
+
+if TYPE_CHECKING:
+    from mlev.typing import ArrayLike
 
 ##############################
 #     Tests for accuracy     #
