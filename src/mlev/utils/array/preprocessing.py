@@ -2,7 +2,7 @@ r"""Utilities to preprocess ``numpy.ndarray`` with missing values."""
 
 from __future__ import annotations
 
-__all__ = ["preprocess"]
+__all__ = ["preprocess_1d"]
 
 
 from typing import TYPE_CHECKING
@@ -16,7 +16,7 @@ if TYPE_CHECKING:
     from collections.abc import Sequence
 
 
-def preprocess(arrays: Sequence[np.ndarray], drop_missing: bool = False) -> list[np.ndarray]:
+def preprocess_1d(arrays: Sequence[np.ndarray], drop_missing: bool = False) -> list[np.ndarray]:
     r"""Preprocess a sequence of arrays by optionally removing rows with
     missing values.
 
@@ -38,19 +38,21 @@ def preprocess(arrays: Sequence[np.ndarray], drop_missing: bool = False) -> list
     Example:
         ```pycon
         >>> import numpy as np
-        >>> from mlev.utils.array import preprocess
+        >>> from mlev.utils.array import preprocess_1d
         >>> arrays = [np.array([1, 0, 0, 1, 1, np.nan]), np.array([0, 1, 0, 1, np.nan, 1])]
-        >>> preprocess(arrays)
+        >>> preprocess_1d(arrays)
         [array([ 1.,  0.,  0.,  1.,  1., nan]), array([ 0.,  1.,  0.,  1., nan,  1.])]
-        >>> preprocess(arrays, drop_missing=True)
+        >>> preprocess_1d(arrays, drop_missing=True)
         [array([1., 0., 0., 1.]), array([0., 1., 0., 1.])]
 
         ```
     """
-    if len(arrays) == 0:
-        msg = "'arrays' cannot be empty"
-        raise ValueError(msg)
+    if not arrays:
+        return []
     check_same_shape(arrays)
+    if arrays[0].ndim != 1:
+        msg = f"arrays must be 1-dimensional but got shape {arrays[0].shape}"
+        raise ValueError(msg)
     if not drop_missing:
         return list(arrays)
     mask = np.logical_not(multi_is_missing(arrays))
