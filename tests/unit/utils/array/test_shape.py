@@ -44,7 +44,7 @@ def test_check_same_shape_2_arrays_correct() -> None:
 
 
 def test_check_same_shape_2_arrays_incorrect() -> None:
-    with pytest.raises(RuntimeError, match="arrays have different shapes"):
+    with pytest.raises(ValueError, match="arrays have different shapes"):
         check_same_shape([np.array([1, 0, 0, 1, 1]), np.array([1, 0, 0, 1])])
 
 
@@ -55,7 +55,7 @@ def test_check_same_shape_3_arrays_correct() -> None:
 
 
 def test_check_same_shape_3_arrays_incorrect() -> None:
-    with pytest.raises(RuntimeError, match="arrays have different shapes"):
+    with pytest.raises(ValueError, match="arrays have different shapes"):
         check_same_shape(
             [np.array([1, 0, 0, 1, 1]), np.array([1, 2, 3, 4]), np.array([6, 5, 4, 3, 2, 1])]
         )
