@@ -2,7 +2,7 @@ r"""Utilities to preprocess ``polars.Series`` with missing values."""
 
 from __future__ import annotations
 
-__all__ = ["preprocess_pred"]
+__all__ = ["preprocess"]
 
 from typing import TYPE_CHECKING
 
@@ -10,36 +10,41 @@ from mlev.utils.series.missing import multi_is_missing
 from mlev.utils.series.shape import check_same_shape
 
 if TYPE_CHECKING:
+    from collections.abc import Sequence
+
     import polars as pl
 
 
-def preprocess_pred(
-    y_true: pl.Series, y_pred: pl.Series, drop_missing: bool = False
-) -> tuple[pl.Series, pl.Series]:
-    r"""Preprocess ``y_true`` and ``y_pred`` arrays.
+def preprocess(series: Sequence[pl.Series], drop_missing: bool = False) -> list[pl.Series]:
+    r"""Preprocess a sequence of series by optionally removing rows with
+    missing values.
+
+    Missing values are represented by ``None``.
+    NaNs are not considered to be missing data in Polars.
 
     Args:
-        y_true: The ground truth target labels.
-        y_pred: The predicted labels.
-        drop_missing: If ``True``, the rows where any of ``y_true`` or
-            ``y_pred`` is null are removed, otherwise they are kept.
+        series: The series to preprocess. All series must have the
+            same shape.
+        drop_missing: If ``True``, the rows where any series has a
+            missing value are removed, otherwise they are kept.
 
     Returns:
-        A tuple with the preprocessed ``y_true`` and ``y_pred``
-            arrays.
+        A list of preprocessed series with the same length and order
+        as the input.
 
     Raises:
-        ValueError: if ``'y_true'`` and ``'y_pred'`` have different
-            shapes.
+        ValueError: if the series do not all have the same shape.
 
     Example:
         ```pycon
         >>> import polars as pl
-        >>> from mlev.utils.series import preprocess_pred
-        >>> y_true = pl.Series("y_true", [1, 0, 0, 1, 1, None])
-        >>> y_pred = pl.Series("y_pred", [0, 1, 0, 1, None, 1])
-        >>> preprocess_pred(y_true, y_pred)
-        (shape: (6,)
+        >>> from mlev.utils.series import preprocess
+        >>> series = [
+        ...     pl.Series("y_true", [1, 0, 0, 1, 1, None]),
+        ...     pl.Series("y_pred", [0, 1, 0, 1, None, 1]),
+        ... ]
+        >>> preprocess(series)
+        [shape: (6,)
         Series: 'y_true' [i64]
         [
             1
@@ -57,9 +62,9 @@ def preprocess_pred(
             1
             null
             1
-        ])
-        >>> preprocess_pred(y_true, y_pred, drop_missing=True)
-        (shape: (4,)
+        ]]
+        >>> preprocess(series, drop_missing=True)
+        [shape: (4,)
         Series: 'y_true' [i64]
         [
             1
@@ -73,12 +78,14 @@ def preprocess_pred(
             1
             0
             1
-        ])
+        ]]
 
         ```
     """
-    check_same_shape([y_true, y_pred])
+    if not series:
+        return []
+    check_same_shape(series)
     if not drop_missing:
-        return y_true, y_pred
-    mask = multi_is_missing([y_true, y_pred]).not_()
-    return y_true.filter(mask), y_pred.filter(mask)
+        return list(series)
+    mask = multi_is_missing(series).not_()
+    return [s.filter(mask) for s in series]
