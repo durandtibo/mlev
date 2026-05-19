@@ -20,7 +20,7 @@ jobs:
       matrix:
         dist-type: [ "sdist", "wheel" ]
         package-extra: [
-          'all',
+          '',
           'colorlog',
           'rich',
           'sklearn',
