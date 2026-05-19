@@ -2,18 +2,101 @@ from __future__ import annotations
 
 import math
 from dataclasses import FrozenInstanceError
+from typing import TYPE_CHECKING
 
 import pytest
 from coola.equality import objects_are_allclose
 
 from mlev.results import BinaryConfusionMatrixResult
 from mlev.results.classification.binary_confmat import (
+    check_betas,
     compute_accuracy,
     compute_f_beta_score,
     compute_precision,
     compute_recall,
     compute_specificity,
 )
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
+
+##################################
+#     Tests for check_betas      #
+##################################
+
+
+# --- valid inputs ---
+
+
+def test_check_betas_single_valid() -> None:
+    check_betas([1.0])  # should not raise
+
+
+def test_check_betas_default_f1() -> None:
+    check_betas([1.0])  # should not raise
+
+
+def test_check_betas_zero() -> None:
+    check_betas([0.0])  # should not raise — zero is allowed
+
+
+def test_check_betas_multiple_valid() -> None:
+    check_betas([0.5, 1.0, 2.0])  # should not raise
+
+
+def test_check_betas_empty() -> None:
+    check_betas([])  # should not raise — no betas to validate
+
+
+@pytest.mark.parametrize(
+    "betas",
+    [
+        pytest.param([0.0], id="zero"),
+        pytest.param([0.5], id="half"),
+        pytest.param([1.0], id="one"),
+        pytest.param([2.0], id="two"),
+        pytest.param([0.5, 1.0, 2.0], id="multiple"),
+        pytest.param([], id="empty"),
+        pytest.param((1.0,), id="tuple"),
+        pytest.param((0.5, 1.0, 2.0), id="tuple-multiple"),
+    ],
+)
+def test_check_betas_valid(betas: Sequence[float]) -> None:
+    check_betas(betas)  # should not raise
+
+
+# --- invalid inputs ---
+
+
+def test_check_betas_single_negative_raises() -> None:
+    with pytest.raises(ValueError, match=r"beta values must be >= 0, got -1.0"):
+        check_betas([-1.0])
+
+
+def test_check_betas_negative_in_multiple_raises() -> None:
+    with pytest.raises(ValueError, match="beta values must be >= 0"):
+        check_betas([0.5, -1.0, 2.0])
+
+
+def test_check_betas_all_negative_raises() -> None:
+    with pytest.raises(ValueError, match="beta values must be >= 0"):
+        check_betas([-0.5, -1.0, -2.0])
+
+
+@pytest.mark.parametrize(
+    ("betas", "match"),
+    [
+        pytest.param([-1.0], "beta values must be >= 0, got -1.0", id="minus-one"),
+        pytest.param([-0.5], "beta values must be >= 0, got -0.5", id="minus-half"),
+        pytest.param([-2.0], "beta values must be >= 0, got -2.0", id="minus-two"),
+        pytest.param([1.0, -1.0], "beta values must be >= 0, got -1.0", id="valid-then-invalid"),
+        pytest.param([-1.0, 1.0], "beta values must be >= 0, got -1.0", id="invalid-then-valid"),
+    ],
+)
+def test_check_betas_invalid(betas: Sequence[float], match: str) -> None:
+    with pytest.raises(ValueError, match=match):
+        check_betas(betas)
+
 
 ######################################
 #     Tests for compute_accuracy     #

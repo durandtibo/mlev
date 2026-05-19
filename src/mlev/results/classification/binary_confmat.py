@@ -4,6 +4,7 @@ from __future__ import annotations
 
 __all__ = [
     "BinaryConfusionMatrixResult",
+    "check_betas",
     "compute_accuracy",
     "compute_f_beta_score",
     "compute_precision",
@@ -28,6 +29,18 @@ CONFUSION_MATRIX_ATTRS = (
     "false_positives",
     "false_negatives",
 )
+
+
+def check_betas(betas: Sequence[float]) -> None:
+    r"""Check the beta values are positive.
+
+    Args:
+        betas: The beta values to check.
+    """
+    for beta in betas:
+        if beta < 0:
+            msg = f"beta values must be >= 0, got {beta}"
+            raise ValueError(msg)
 
 
 def compute_accuracy(num_correct_predictions: int, num_predictions: int) -> float:
@@ -375,10 +388,7 @@ class BinaryConfusionMatrixResult(BaseResult):
             if value < 0:
                 msg = f"{name} must be >= 0, got {value}"
                 raise ValueError(msg)
-        for beta in betas:
-            if beta < 0:
-                msg = f"beta values must be >= 0, got {beta}"
-                raise ValueError(msg)
+        check_betas(betas)
 
         num_predictions = true_positives + true_negatives + false_positives + false_negatives
         num_correct_predictions = true_positives + true_negatives
