@@ -347,7 +347,7 @@ class BinaryConfusionMatrixResult(BaseResult):
     0.8
     >>> m.f_beta_scores
     {1.0: 0.6666666666666665}
-    >>> # NaN propagates to all derived metrics
+    >>> # NaN propagates to derived metrics
     >>> m_nan = BinaryConfusionMatrixResult.from_confusion_matrix(
     ...     true_positives=float("nan"),
     ...     true_negatives=4,
