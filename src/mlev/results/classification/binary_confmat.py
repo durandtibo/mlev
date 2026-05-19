@@ -71,7 +71,7 @@ def compute_accuracy(num_correct_predictions: float, num_predictions: float) -> 
 
         ```
     """
-    if math.isnan(float(num_predictions)) or num_predictions == 0:
+    if math.isnan(num_predictions) or num_predictions == 0:
         return float("nan")
     return num_correct_predictions / num_predictions
 
@@ -115,10 +115,10 @@ def compute_precision(
         ```
     """
     if (
-        math.isnan(float(num_predictions))
-        or num_predictions == 0
-        or math.isnan(float(true_positives))
-        or math.isnan(float(false_positives))
+        num_predictions == 0
+        or math.isnan(num_predictions)
+        or math.isnan(true_positives)
+        or math.isnan(false_positives)
     ):
         return float("nan")
     denominator = true_positives + false_positives
@@ -164,10 +164,10 @@ def compute_recall(
         ```
     """
     if (
-        math.isnan(float(num_predictions))
-        or num_predictions == 0
-        or math.isnan(float(true_positives))
-        or math.isnan(float(false_negatives))
+        num_predictions == 0
+        or math.isnan(num_predictions)
+        or math.isnan(true_positives)
+        or math.isnan(false_negatives)
     ):
         return float("nan")
     denominator = true_positives + false_negatives
@@ -213,10 +213,10 @@ def compute_specificity(
         ```
     """
     if (
-        math.isnan(float(num_predictions))
-        or num_predictions == 0
-        or math.isnan(float(true_negatives))
-        or math.isnan(float(false_positives))
+        num_predictions == 0
+        or math.isnan(num_predictions)
+        or math.isnan(true_negatives)
+        or math.isnan(false_positives)
     ):
         return float("nan")
     denominator = true_negatives + false_positives
@@ -521,7 +521,7 @@ class BinaryConfusionMatrixResult(BaseResult):
             ("false_positives", false_positives),
             ("false_negatives", false_negatives),
         ):
-            if not math.isnan(float(value)) and value < 0:
+            if not math.isnan(value) and value < 0:
                 msg = f"{name} must be >= 0, got {value}"
                 raise ValueError(msg)
         check_betas(betas)
