@@ -45,16 +45,17 @@ def check_betas(betas: Sequence[float]) -> None:
             raise ValueError(msg)
 
 
-def compute_accuracy(num_correct_predictions: int, num_predictions: int) -> float:
+def compute_accuracy(num_correct_predictions: float, num_predictions: float) -> float:
     r"""Compute the accuracy score.
 
     Args:
-        num_correct_predictions: The number of correct predictions.
-        num_predictions: The total number of predictions.
+        num_correct_predictions: The number of correct predictions,
+            or ``nan``.
+        num_predictions: The total number of predictions, or ``nan``.
 
     Returns:
         The ratio ``num_correct_predictions / num_predictions``.
-        Returns ``nan`` when ``num_predictions`` is ``0``.
+        Returns ``nan`` when ``num_predictions`` is ``0`` or ``nan``.
 
     Example:
         ```pycon
@@ -63,29 +64,39 @@ def compute_accuracy(num_correct_predictions: int, num_predictions: int) -> floa
         0.7
         >>> compute_accuracy(num_correct_predictions=0, num_predictions=0)
         nan
+        >>> compute_accuracy(num_correct_predictions=float("nan"), num_predictions=10)
+        nan
+        >>> compute_accuracy(num_correct_predictions=7, num_predictions=float("nan"))
+        nan
 
         ```
     """
-    if num_predictions == 0:
+    if math.isnan(num_predictions) or num_predictions == 0:
         return float("nan")
     return num_correct_predictions / num_predictions
 
 
-def compute_precision(true_positives: int, false_positives: int, num_predictions: int) -> float:
+def compute_precision(
+    true_positives: float,
+    false_positives: float,
+    num_predictions: float,
+) -> float:
     r"""Compute the precision score.
 
     Precision measures the proportion of true positives among all
     positive predictions.
 
     Args:
-        true_positives: The number of true positives.
-        false_positives: The number of false positives.
-        num_predictions: The total number of predictions.
+        true_positives: The number of true positives, or ``nan``.
+        false_positives: The number of false positives, or ``nan``.
+        num_predictions: The total number of predictions, or ``nan``.
 
     Returns:
         The ratio ``true_positives / (true_positives + false_positives)``.
-        Returns ``nan`` when ``num_predictions`` is ``0``, and ``0.0``
-        when ``true_positives + false_positives`` is ``0``.
+        Returns ``nan`` when ``num_predictions`` is ``0`` or ``nan``,
+        or when either ``true_positives`` or ``false_positives`` is
+        ``nan``. Returns ``0.0`` when
+        ``true_positives + false_positives`` is ``0``.
 
     Example:
         ```pycon
@@ -96,30 +107,45 @@ def compute_precision(true_positives: int, false_positives: int, num_predictions
         0.0
         >>> compute_precision(true_positives=0, false_positives=0, num_predictions=0)
         nan
+        >>> compute_precision(true_positives=float("nan"), false_positives=1, num_predictions=10)
+        nan
+        >>> compute_precision(true_positives=3, false_positives=1, num_predictions=float("nan"))
+        nan
 
         ```
     """
-    if num_predictions == 0:
+    if (
+        num_predictions == 0
+        or math.isnan(num_predictions)
+        or math.isnan(true_positives)
+        or math.isnan(false_positives)
+    ):
         return float("nan")
     denominator = true_positives + false_positives
     return true_positives / denominator if denominator > 0 else 0.0
 
 
-def compute_recall(true_positives: int, false_negatives: int, num_predictions: int) -> float:
+def compute_recall(
+    true_positives: float,
+    false_negatives: float,
+    num_predictions: float,
+) -> float:
     r"""Compute the recall (sensitivity) score.
 
     Recall measures the proportion of actual positives that are
     correctly identified.
 
     Args:
-        true_positives: The number of true positives.
-        false_negatives: The number of false negatives.
-        num_predictions: The total number of predictions.
+        true_positives: The number of true positives, or ``nan``.
+        false_negatives: The number of false negatives, or ``nan``.
+        num_predictions: The total number of predictions, or ``nan``.
 
     Returns:
         The ratio ``true_positives / (true_positives + false_negatives)``.
-        Returns ``nan`` when ``num_predictions`` is ``0``, and ``0.0``
-        when ``true_positives + false_negatives`` is ``0``.
+        Returns ``nan`` when ``num_predictions`` is ``0`` or ``nan``,
+        or when either ``true_positives`` or ``false_negatives`` is
+        ``nan``. Returns ``0.0`` when
+        ``true_positives + false_negatives`` is ``0``.
 
     Example:
         ```pycon
@@ -130,30 +156,45 @@ def compute_recall(true_positives: int, false_negatives: int, num_predictions: i
         0.0
         >>> compute_recall(true_positives=0, false_negatives=0, num_predictions=0)
         nan
+        >>> compute_recall(true_positives=float("nan"), false_negatives=2, num_predictions=10)
+        nan
+        >>> compute_recall(true_positives=3, false_negatives=2, num_predictions=float("nan"))
+        nan
 
         ```
     """
-    if num_predictions == 0:
+    if (
+        num_predictions == 0
+        or math.isnan(num_predictions)
+        or math.isnan(true_positives)
+        or math.isnan(false_negatives)
+    ):
         return float("nan")
     denominator = true_positives + false_negatives
     return true_positives / denominator if denominator > 0 else 0.0
 
 
-def compute_specificity(true_negatives: int, false_positives: int, num_predictions: int) -> float:
+def compute_specificity(
+    true_negatives: float,
+    false_positives: float,
+    num_predictions: float,
+) -> float:
     r"""Compute the specificity (true negative rate) score.
 
     Specificity measures the proportion of actual negatives that are
     correctly identified.
 
     Args:
-        true_negatives: The number of true negatives.
-        false_positives: The number of false positives.
-        num_predictions: The total number of predictions.
+        true_negatives: The number of true negatives, or ``nan``.
+        false_positives: The number of false positives, or ``nan``.
+        num_predictions: The total number of predictions, or ``nan``.
 
     Returns:
         The ratio ``true_negatives / (true_negatives + false_positives)``.
-        Returns ``nan`` when ``num_predictions`` is ``0``, and ``0.0``
-        when ``true_negatives + false_positives`` is ``0``.
+        Returns ``nan`` when ``num_predictions`` is ``0`` or ``nan``,
+        or when either ``true_negatives`` or ``false_positives`` is
+        ``nan``. Returns ``0.0`` when
+        ``true_negatives + false_positives`` is ``0``.
 
     Example:
         ```pycon
@@ -164,10 +205,19 @@ def compute_specificity(true_negatives: int, false_positives: int, num_predictio
         0.0
         >>> compute_specificity(true_negatives=0, false_positives=0, num_predictions=0)
         nan
+        >>> compute_specificity(true_negatives=float("nan"), false_positives=1, num_predictions=10)
+        nan
+        >>> compute_specificity(true_negatives=4, false_positives=1, num_predictions=float("nan"))
+        nan
 
         ```
     """
-    if num_predictions == 0:
+    if (
+        num_predictions == 0
+        or math.isnan(num_predictions)
+        or math.isnan(true_negatives)
+        or math.isnan(false_positives)
+    ):
         return float("nan")
     denominator = true_negatives + false_positives
     return true_negatives / denominator if denominator > 0 else 0.0
@@ -261,52 +311,61 @@ class BinaryConfusionMatrixResult(BaseResult):
     recall, specificity, and F-beta scores.
 
     Use :meth:`from_confusion_matrix` to construct an instance from
-    raw confusion matrix counts.
+    raw confusion matrix counts. Any count set to ``nan`` propagates
+    to all derived metrics.
 
     Attributes:
-        true_positives: The number of true positives.
-        true_negatives: The number of true negatives.
-        false_positives: The number of false positives.
-        false_negatives: The number of false negatives.
-        num_predictions: The total number of predictions.
-        num_correct_predictions: The number of correct predictions.
-        accuracy: The accuracy score.
-        precision: The precision score.
-        recall: The recall score.
-        specificity: The specificity score.
+        true_positives: The number of true positives, or ``nan``.
+        true_negatives: The number of true negatives, or ``nan``.
+        false_positives: The number of false positives, or ``nan``.
+        false_negatives: The number of false negatives, or ``nan``.
+        num_predictions: The total number of predictions, or ``nan``.
+        num_correct_predictions: The number of correct predictions,
+            or ``nan``.
+        accuracy: The accuracy score, or ``nan``.
+        precision: The precision score, or ``nan``.
+        recall: The recall score, or ``nan``.
+        specificity: The specificity score, or ``nan``.
         f_beta_scores: A mapping of beta values to F-beta scores.
 
     Example:
-        ```pycon
-        >>> from mlev.results import BinaryConfusionMatrixResult
-        >>> m = BinaryConfusionMatrixResult.from_confusion_matrix(
-        ...     true_positives=3,
-        ...     true_negatives=4,
-        ...     false_positives=1,
-        ...     false_negatives=2,
-        ... )
-        >>> m.accuracy
-        0.7
-        >>> m.precision
-        0.75
-        >>> m.recall
-        0.6
-        >>> m.specificity
-        0.8
-        >>> m.f_beta_scores
-        {1.0: 0.6666666666666665}
-        >>> m.to_dict()
-        {'accuracy': 0.7, 'precision': 0.75, 'recall': 0.6, 'specificity': 0.8, 'f1': 0.6666666666666665, 'num_correct_predictions': 7, 'num_predictions': 10, 'true_positives': 3, 'true_negatives': 4, 'false_positives': 1, 'false_negatives': 2}
+    ```pycon
+    >>> from mlev.results import BinaryConfusionMatrixResult
+    >>> m = BinaryConfusionMatrixResult.from_confusion_matrix(
+    ...     true_positives=3,
+    ...     true_negatives=4,
+    ...     false_positives=1,
+    ...     false_negatives=2,
+    ... )
+    >>> m.accuracy
+    0.7
+    >>> m.precision
+    0.75
+    >>> m.recall
+    0.6
+    >>> m.specificity
+    0.8
+    >>> m.f_beta_scores
+    {1.0: 0.6666666666666665}
+    >>> # NaN propagates to derived metrics
+    >>> m_nan = BinaryConfusionMatrixResult.from_confusion_matrix(
+    ...     true_positives=float("nan"),
+    ...     true_negatives=4,
+    ...     false_positives=1,
+    ...     false_negatives=2,
+    ... )
+    >>> m_nan.accuracy
+    nan
 
-        ```
+    ```
     """
 
-    true_positives: int
-    true_negatives: int
-    false_positives: int
-    false_negatives: int
-    num_predictions: int
-    num_correct_predictions: int
+    true_positives: int | float
+    true_negatives: int | float
+    false_positives: int | float
+    false_negatives: int | float
+    num_predictions: int | float
+    num_correct_predictions: int | float
     accuracy: float
     precision: float
     recall: float
@@ -376,14 +435,13 @@ class BinaryConfusionMatrixResult(BaseResult):
             f"FN={self.false_negatives:,}"
         )
 
-        # Each entry: (label, value, optional (numerator, denominator) for count suffix)
         tp, tn, fp, fn = (
             self.true_positives,
             self.true_negatives,
             self.false_positives,
             self.false_negatives,
         )
-        metrics: list[tuple[str, float, tuple[int, int] | None]] = [
+        metrics: list[tuple[str, float, tuple[int | float, int | float] | None]] = [
             ("Accuracy", self.accuracy, (self.num_correct_predictions, self.num_predictions)),
             ("Precision", self.precision, (tp, tp + fp)),
             ("Recall", self.recall, (tp, tp + fn)),
@@ -405,19 +463,24 @@ class BinaryConfusionMatrixResult(BaseResult):
     @classmethod
     def from_confusion_matrix(
         cls,
-        true_positives: int,
-        true_negatives: int,
-        false_positives: int,
-        false_negatives: int,
+        true_positives: float,
+        true_negatives: float,
+        false_positives: float,
+        false_negatives: float,
         betas: Sequence[float] = (1.0,),
     ) -> BinaryConfusionMatrixResult:
         r"""Create a result from raw confusion matrix counts.
 
+        Any count set to ``nan`` propagates to all derived metrics
+        (``num_predictions``, ``num_correct_predictions``,
+        ``accuracy``, ``precision``, ``recall``, ``specificity``,
+        and all F-beta scores).
+
         Args:
-            true_positives: The number of true positives.
-            true_negatives: The number of true negatives.
-            false_positives: The number of false positives.
-            false_negatives: The number of false negatives.
+            true_positives: The number of true positives, or ``nan``.
+            true_negatives: The number of true negatives, or ``nan``.
+            false_positives: The number of false positives, or ``nan``.
+            false_negatives: The number of false negatives, or ``nan``.
             betas: The beta values for F-beta score computation.
                 Defaults to ``(1.0,)`` which gives the F1 score.
 
@@ -425,7 +488,7 @@ class BinaryConfusionMatrixResult(BaseResult):
             A fully populated ``BinaryConfusionMatrixResult``.
 
         Raises:
-            ValueError: if any count is negative.
+            ValueError: if any non-NaN count is negative.
             ValueError: if any beta value is negative.
 
         Example:
@@ -440,6 +503,15 @@ class BinaryConfusionMatrixResult(BaseResult):
             ... )
             >>> m.f_beta_scores
             {0.5: 0.7142857142857143, 1.0: 0.6666666666666665, 2.0: 0.625}
+            >>> import math
+            >>> m_nan = BinaryConfusionMatrixResult.from_confusion_matrix(
+            ...     true_positives=float("nan"),
+            ...     true_negatives=4,
+            ...     false_positives=1,
+            ...     false_negatives=2,
+            ... )
+            >>> math.isnan(m_nan.precision)
+            True
 
             ```
         """
@@ -449,15 +521,23 @@ class BinaryConfusionMatrixResult(BaseResult):
             ("false_positives", false_positives),
             ("false_negatives", false_negatives),
         ):
-            if value < 0:
+            if not math.isnan(value) and value < 0:
                 msg = f"{name} must be >= 0, got {value}"
                 raise ValueError(msg)
         check_betas(betas)
 
         num_predictions = true_positives + true_negatives + false_positives + false_negatives
         num_correct_predictions = true_positives + true_negatives
-        precision = compute_precision(true_positives, false_positives, num_predictions)
-        recall = compute_recall(true_positives, false_negatives, num_predictions)
+        precision = compute_precision(
+            true_positives=true_positives,
+            false_positives=false_positives,
+            num_predictions=num_predictions,
+        )
+        recall = compute_recall(
+            true_positives=true_positives,
+            false_negatives=false_negatives,
+            num_predictions=num_predictions,
+        )
 
         return cls(
             true_positives=true_positives,
@@ -466,9 +546,18 @@ class BinaryConfusionMatrixResult(BaseResult):
             false_negatives=false_negatives,
             num_predictions=num_predictions,
             num_correct_predictions=num_correct_predictions,
-            accuracy=compute_accuracy(num_correct_predictions, num_predictions),
+            accuracy=compute_accuracy(
+                num_correct_predictions=num_correct_predictions, num_predictions=num_predictions
+            ),
             precision=precision,
             recall=recall,
-            specificity=compute_specificity(true_negatives, false_positives, num_predictions),
-            f_beta_scores={beta: compute_f_beta_score(precision, recall, beta) for beta in betas},
+            specificity=compute_specificity(
+                true_negatives=true_negatives,
+                false_positives=false_positives,
+                num_predictions=num_predictions,
+            ),
+            f_beta_scores={
+                beta: compute_f_beta_score(precision=precision, recall=recall, beta=beta)
+                for beta in betas
+            },
         )
