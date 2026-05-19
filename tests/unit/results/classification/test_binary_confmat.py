@@ -895,11 +895,11 @@ def test_binary_confusion_matrix_result_to_dict_zero_predictions() -> None:
                 "Binary Confusion Matrix\n"
                 "-----------------------\n"
                 "n=0  TP=0  TN=0  FP=0  FN=0\n"
-                "Accuracy    [░░░░░░░░░░░░░░░░░░░░]  nan  (0/0)\n"
-                "Precision   [░░░░░░░░░░░░░░░░░░░░]  nan  (0/0)\n"
-                "Recall      [░░░░░░░░░░░░░░░░░░░░]  nan  (0/0)\n"
-                "Specificity [░░░░░░░░░░░░░░░░░░░░]  nan  (0/0)\n"
-                "F1          [░░░░░░░░░░░░░░░░░░░░]  nan"
+                "Accuracy                            nan  (0/0)\n"
+                "Precision                           nan  (0/0)\n"
+                "Recall                              nan  (0/0)\n"
+                "Specificity                         nan  (0/0)\n"
+                "F1                                  nan"
             ),
             id="zero-predictions",
         ),

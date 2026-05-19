@@ -421,7 +421,10 @@ class BinaryConfusionMatrixResult(BaseResult):
 
         metric_lines = []
         for name, value, counts in metrics:
-            line = f"{name:<11} {make_bar(value, length=20)}  {value:.4f}"
+            if math.isnan(value):
+                line = f"{name:<11} {'':22}  nan"
+            else:
+                line = f"{name:<11} {make_bar(value, length=20)}  {value:.4f}"
             if counts is not None:
                 numerator, denominator = counts
                 line += f"  ({numerator:,}/{denominator:,})"
