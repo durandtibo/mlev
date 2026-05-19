@@ -354,9 +354,8 @@ class BinaryConfusionMatrixResult(BaseResult):
     ...     false_positives=1,
     ...     false_negatives=2,
     ... )
-    >>> import math
-    >>> math.isnan(m_nan.accuracy)
-    True
+    >>> m_nan.accuracy
+    nan
 
     ```
     """
