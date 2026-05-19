@@ -30,7 +30,7 @@ def preprocess(series: Sequence[pl.Series], drop_missing: bool = False) -> list[
 
     Returns:
         A list of preprocessed series with the same length and order
-        as the input.
+        as the input. Returns an empty list when ``series`` is empty.
 
     Raises:
         ValueError: if the series do not all have the same shape.

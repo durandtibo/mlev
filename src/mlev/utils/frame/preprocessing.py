@@ -11,12 +11,12 @@ if TYPE_CHECKING:
 
 
 def preprocess(frame: pl.DataFrame, drop_missing: bool = False) -> pl.DataFrame:
-    r"""Preprocess ``y_true`` and ``y_pred`` arrays.
+    r"""Preprocess a DataFrame by optionally removing rows with null values.
 
     Args:
         frame: The DataFrame to preprocess.
-        drop_missing: If ``True``, the rows where any of the values
-            is null are removed, otherwise they are kept.
+        drop_missing: If ``True``, drop rows where any column value is
+            null; otherwise return the input frame unchanged.
 
     Returns:
         A preprocessed DataFrame.
