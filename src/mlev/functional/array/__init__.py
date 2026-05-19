@@ -14,6 +14,7 @@ Example:
 
 from __future__ import annotations
 
-__all__ = ["accuracy"]
+__all__ = ["accuracy", "binary_confusion_matrix"]
 
 from mlev.functional.array.classification.accuracy import accuracy
+from mlev.functional.array.classification.binary_confmat import binary_confusion_matrix
