@@ -1,4 +1,4 @@
-r"""Classification accuracy result implementation."""
+r"""Binary confusion matrix result implementation."""
 
 from __future__ import annotations
 
@@ -34,7 +34,7 @@ CONFUSION_MATRIX_ATTRS = (
 
 
 def check_betas(betas: Sequence[float]) -> None:
-    r"""Check the beta values are positive.
+    r"""Check that all beta values are non-negative.
 
     Args:
         betas: The beta values to check.
@@ -210,7 +210,7 @@ def f_beta_label(beta: float, label: str = "F") -> str:
     (e.g. ``0.5`` → ``'F0.5'``).
 
     Args:
-        beta: The beta value. Must be non-negative.
+        beta: The beta value to format.
         label: The prefix to use for the label. Defaults to ``'F'``.
 
     Returns:
