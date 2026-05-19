@@ -1,1 +1,1 @@
-r"""DataFrame-oriented metric objects."""
+r"""DataFrame-oriented metric object APIs."""

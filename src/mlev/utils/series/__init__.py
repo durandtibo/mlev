@@ -1,4 +1,4 @@
-r"""Helpers to validate and convert series-like inputs."""
+r"""Helpers to validate and preprocess Polars Series."""
 
 from __future__ import annotations
 

@@ -1,1 +1,1 @@
-r"""Array-oriented metric objects."""
+r"""Array-oriented metric object APIs."""

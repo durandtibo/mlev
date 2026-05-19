@@ -1,4 +1,4 @@
-r"""Helpers to validate and convert DataFrame-like inputs."""
+r"""Helpers to validate and preprocess Polars DataFrames."""
 
 from __future__ import annotations
 

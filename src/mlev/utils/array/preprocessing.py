@@ -30,10 +30,11 @@ def preprocess_1d(arrays: Sequence[np.ndarray], drop_missing: bool = False) -> l
 
     Returns:
         A list of preprocessed arrays with the same order as the input.
+        Returns an empty list when ``arrays`` is empty.
 
     Raises:
-        ValueError: if ``arrays`` is empty.
         ValueError: if the arrays do not all have the same shape.
+        ValueError: if arrays are not 1-dimensional.
 
     Example:
         ```pycon
