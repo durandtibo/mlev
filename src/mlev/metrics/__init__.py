@@ -1,5 +1,5 @@
-r"""Metric result object namespaces.
+r"""Object-oriented metric API namespaces.
 
-This package groups result-object APIs by input type (array and frame) and is
-intended for object-oriented metric workflows.
+This package groups metric APIs by input type (array and frame) for workflows
+that rely on metric objects instead of one-shot functional calls.
 """
