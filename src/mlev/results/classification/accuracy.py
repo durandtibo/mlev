@@ -5,7 +5,7 @@ from __future__ import annotations
 __all__ = ["AccuracyResult", "compute_accuracy"]
 
 import math
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 
 from coola.equality import objects_are_allclose, objects_are_equal
 from coola.utils.format import make_bar
@@ -95,21 +95,17 @@ class AccuracyResult(BaseResult):
         if type(other) is not type(self):
             return False
         return objects_are_allclose(
-            self.num_correct_predictions,
-            other.num_correct_predictions,
+            asdict(self),
+            asdict(other),
             rtol=rtol,
             atol=atol,
             equal_nan=equal_nan,
-        ) and objects_are_allclose(
-            self.num_predictions, other.num_predictions, rtol=rtol, atol=atol, equal_nan=equal_nan
         )
 
     def equal(self, other: object, equal_nan: bool = False) -> bool:
         if type(other) is not type(self):
             return False
-        return objects_are_equal(
-            self.num_correct_predictions, other.num_correct_predictions, equal_nan=equal_nan
-        ) and objects_are_equal(self.num_predictions, other.num_predictions, equal_nan=equal_nan)
+        return objects_are_equal(asdict(self), asdict(other), equal_nan=equal_nan)
 
     def to_dict(self, prefix: str = "", suffix: str = "") -> dict[str, int | float]:
         return {
