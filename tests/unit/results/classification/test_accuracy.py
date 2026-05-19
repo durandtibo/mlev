@@ -261,25 +261,25 @@ def test_accuracy_result_to_dict_nan() -> None:
 
 def test_accuracy_result_to_display() -> None:
     assert AccuracyResult(num_correct_predictions=7, num_predictions=10).to_display() == (
-        "[██████████████░░░░░░]  0.7000  (7/10)"
+        "Accuracy [██████████████░░░░░░]  0.7000  (7/10)"
     )
 
 
 def test_accuracy_result_to_display_perfect() -> None:
     assert AccuracyResult(num_correct_predictions=10, num_predictions=10).to_display() == (
-        "[████████████████████]  1.0000  (10/10)"
+        "Accuracy [████████████████████]  1.0000  (10/10)"
     )
 
 
 def test_accuracy_result_to_display_zero() -> None:
     assert AccuracyResult(num_correct_predictions=0, num_predictions=10).to_display() == (
-        "[░░░░░░░░░░░░░░░░░░░░]  0.0000  (0/10)"
+        "Accuracy [░░░░░░░░░░░░░░░░░░░░]  0.0000  (0/10)"
     )
 
 
 def test_accuracy_result_to_display_large_numbers() -> None:
     assert AccuracyResult(num_correct_predictions=1000, num_predictions=10000).to_display() == (
-        "[██░░░░░░░░░░░░░░░░░░]  0.1000  (1,000/10,000)"
+        "Accuracy [██░░░░░░░░░░░░░░░░░░]  0.1000  (1,000/10,000)"
     )
 
 
