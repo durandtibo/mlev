@@ -31,7 +31,7 @@ class AccuracyResult(BaseResult):
         AccuracyResult(num_correct_predictions=7, num_predictions=10)
         >>> m.to_dict()
         {'accuracy': 0.7, 'num_correct_predictions': 7, 'num_predictions': 10}
-        >>> print(m.to_str())
+        >>> print(m.to_display())
         [██████████████░░░░░░]  0.7000  (7/10)
 
         ```
@@ -117,7 +117,7 @@ class AccuracyResult(BaseResult):
             f"{prefix}num_predictions{suffix}": self.num_predictions,
         }
 
-    def to_str(self) -> str:
+    def to_display(self) -> str:
         r"""Return a human-readable summary string.
 
         Returns:

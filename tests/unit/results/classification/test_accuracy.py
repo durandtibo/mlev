@@ -259,37 +259,37 @@ def test_accuracy_result_to_dict_nan() -> None:
     )
 
 
-def test_accuracy_result_to_str() -> None:
-    assert AccuracyResult(num_correct_predictions=7, num_predictions=10).to_str() == (
+def test_accuracy_result_to_display() -> None:
+    assert AccuracyResult(num_correct_predictions=7, num_predictions=10).to_display() == (
         "[██████████████░░░░░░]  0.7000  (7/10)"
     )
 
 
-def test_accuracy_result_to_str_perfect() -> None:
-    assert AccuracyResult(num_correct_predictions=10, num_predictions=10).to_str() == (
+def test_accuracy_result_to_display_perfect() -> None:
+    assert AccuracyResult(num_correct_predictions=10, num_predictions=10).to_display() == (
         "[████████████████████]  1.0000  (10/10)"
     )
 
 
-def test_accuracy_result_to_str_zero() -> None:
-    assert AccuracyResult(num_correct_predictions=0, num_predictions=10).to_str() == (
+def test_accuracy_result_to_display_zero() -> None:
+    assert AccuracyResult(num_correct_predictions=0, num_predictions=10).to_display() == (
         "[░░░░░░░░░░░░░░░░░░░░]  0.0000  (0/10)"
     )
 
 
-def test_accuracy_result_to_str_large_numbers() -> None:
-    assert AccuracyResult(num_correct_predictions=1000, num_predictions=10000).to_str() == (
+def test_accuracy_result_to_display_large_numbers() -> None:
+    assert AccuracyResult(num_correct_predictions=1000, num_predictions=10000).to_display() == (
         "[██░░░░░░░░░░░░░░░░░░]  0.1000  (1,000/10,000)"
     )
 
 
-def test_accuracy_result_to_str_empty() -> None:
-    assert AccuracyResult(num_correct_predictions=0, num_predictions=0).to_str() == (
+def test_accuracy_result_to_display_empty() -> None:
+    assert AccuracyResult(num_correct_predictions=0, num_predictions=0).to_display() == (
         "AccuracyResult: no predictions"
     )
 
 
-def test_accuracy_result_to_str_nan() -> None:
-    assert AccuracyResult(num_correct_predictions=float("nan"), num_predictions=10).to_str() == (
-        "AccuracyResult: unknown number of correct predictions"
-    )
+def test_accuracy_result_to_display_nan() -> None:
+    assert AccuracyResult(
+        num_correct_predictions=float("nan"), num_predictions=10
+    ).to_display() == ("AccuracyResult: unknown number of correct predictions")

@@ -365,7 +365,7 @@ class BinaryConfusionMatrixResult(BaseResult):
         )
         return out
 
-    def to_str(self) -> str:
+    def to_display(self) -> str:
         r"""Return a human-friendly text representation of the
         classification results.
 
@@ -382,7 +382,7 @@ class BinaryConfusionMatrixResult(BaseResult):
             ...     false_positives=1,
             ...     false_negatives=2,
             ... )
-            >>> print(m.to_str())
+            >>> print(m.to_display())
             Binary Confusion Matrix
             -----------------------
             n=10  TP=3  TN=4  FP=1  FN=2

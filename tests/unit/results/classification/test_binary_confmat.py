@@ -751,7 +751,7 @@ def test_binary_confusion_matrix_result_to_dict_zero_predictions() -> None:
     )
 
 
-# --- to_str ---
+# --- to_display ---
 
 
 @pytest.mark.parametrize(
@@ -905,7 +905,7 @@ def test_binary_confusion_matrix_result_to_dict_zero_predictions() -> None:
         ),
     ],
 )
-def test_to_str(
+def test_to_display(
     tp: int,
     tn: int,
     fp: int,
@@ -920,7 +920,7 @@ def test_to_str(
         false_negatives=fn,
         betas=betas,
     )
-    assert m.to_str() == expected
+    assert m.to_display() == expected
 
 
 # --- from_confusion_matrix ---
