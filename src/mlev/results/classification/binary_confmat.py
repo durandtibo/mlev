@@ -10,15 +10,17 @@ __all__ = [
     "compute_precision",
     "compute_recall",
     "compute_specificity",
+    "f_beta_label",
 ]
 
 import math
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 from typing import TYPE_CHECKING
 
 from coola.equality import objects_are_allclose, objects_are_equal
 
 from mlev.results.base import BaseResult
+from mlev.utils.format import make_robust_bar
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -216,6 +218,42 @@ def compute_f_beta_score(precision: float, recall: float, beta: float) -> float:
     return (1 + beta_sq) * (precision * recall) / denominator if denominator > 0 else 0.0
 
 
+def f_beta_label(beta: float, label: str = "F") -> str:
+    r"""Return the label for an F-beta score.
+
+    Integer beta values are formatted without a decimal point
+    (e.g. ``1.0`` → ``'F1'``), while non-integer beta values
+    use ``g`` formatting to strip trailing zeros
+    (e.g. ``0.5`` → ``'F0.5'``).
+
+    Args:
+        beta: The beta value. Must be non-negative.
+        label: The prefix to use for the label. Defaults to ``'F'``.
+
+    Returns:
+        A string label of the form ``'{label}{beta}'``.
+
+    Example:
+        ```pycon
+        >>> from mlev.results.classification.binary_confmat import f_beta_label
+        >>> f_beta_label(1.0)
+        'F1'
+        >>> f_beta_label(2.0)
+        'F2'
+        >>> f_beta_label(0.5)
+        'F0.5'
+        >>> f_beta_label(1.5)
+        'F1.5'
+        >>> f_beta_label(1.0, label="f")
+        'f1'
+        >>> f_beta_label(0.5, label="beta")
+        'beta0.5'
+
+        ```
+    """
+    return f"{label}{int(beta)}" if beta == int(beta) else f"{label}{beta:g}"
+
+
 @dataclass(frozen=True)
 class BinaryConfusionMatrixResult(BaseResult):
     r"""Store aggregated values from a binary confusion matrix used to
@@ -297,24 +335,14 @@ class BinaryConfusionMatrixResult(BaseResult):
     ) -> bool:
         if type(other) is not type(self):
             return False
-        return all(
-            objects_are_allclose(
-                getattr(self, attr),
-                getattr(other, attr),
-                rtol=rtol,
-                atol=atol,
-                equal_nan=equal_nan,
-            )
-            for attr in CONFUSION_MATRIX_ATTRS
+        return objects_are_allclose(
+            asdict(self), asdict(other), atol=atol, rtol=rtol, equal_nan=equal_nan
         )
 
     def equal(self, other: object, equal_nan: bool = False) -> bool:
         if type(other) is not type(self):
             return False
-        return all(
-            objects_are_equal(getattr(self, attr), getattr(other, attr), equal_nan=equal_nan)
-            for attr in CONFUSION_MATRIX_ATTRS
-        )
+        return objects_are_equal(asdict(self), asdict(other), equal_nan=equal_nan)
 
     def to_dict(self, prefix: str = "", suffix: str = "") -> dict[str, int | float]:
         out: dict[str, int | float] = {
@@ -324,8 +352,7 @@ class BinaryConfusionMatrixResult(BaseResult):
             f"{prefix}specificity{suffix}": self.specificity,
         }
         for beta, score in self.f_beta_scores.items():
-            key = f"f{int(beta)}" if beta == int(beta) else f"f{beta:g}"
-            out[f"{prefix}{key}{suffix}"] = score
+            out[f"{prefix}{f_beta_label(beta, label='f')}{suffix}"] = score
         out.update(
             {
                 f"{prefix}num_correct_predictions{suffix}": self.num_correct_predictions,
@@ -337,6 +364,71 @@ class BinaryConfusionMatrixResult(BaseResult):
             }
         )
         return out
+
+    def to_str(self) -> str:
+        r"""Return a human-friendly text representation of the
+        classification results.
+
+        Returns:
+            A formatted string with a confusion matrix summary and
+            progress bars for each metric.
+
+        Example:
+            ```pycon
+            >>> from mlev.results import BinaryConfusionMatrixResult
+            >>> m = BinaryConfusionMatrixResult.from_confusion_matrix(
+            ...     true_positives=3,
+            ...     true_negatives=4,
+            ...     false_positives=1,
+            ...     false_negatives=2,
+            ... )
+            >>> print(m.to_str())
+            Binary Confusion Matrix
+            -----------------------
+            n=10  TP=3  TN=4  FP=1  FN=2
+            Accuracy    [██████████████░░░░░░]  0.7000  (7/10)
+            Precision   [███████████████░░░░░]  0.7500  (3/4)
+            Recall      [████████████░░░░░░░░]  0.6000  (3/5)
+            Specificity [████████████████░░░░]  0.8000  (4/5)
+            F1          [█████████████░░░░░░░]  0.6667
+
+            ```
+        """
+        header = "Binary Confusion Matrix"
+        separator = "-" * len(header)
+        summary = (
+            f"n={self.num_predictions:,}  "
+            f"TP={self.true_positives:,}  "
+            f"TN={self.true_negatives:,}  "
+            f"FP={self.false_positives:,}  "
+            f"FN={self.false_negatives:,}"
+        )
+
+        # Each entry: (label, value, optional (numerator, denominator) for count suffix)
+        tp, tn, fp, fn = (
+            self.true_positives,
+            self.true_negatives,
+            self.false_positives,
+            self.false_negatives,
+        )
+        metrics: list[tuple[str, float, tuple[int, int] | None]] = [
+            ("Accuracy", self.accuracy, (self.num_correct_predictions, self.num_predictions)),
+            ("Precision", self.precision, (tp, tp + fp)),
+            ("Recall", self.recall, (tp, tp + fn)),
+            ("Specificity", self.specificity, (tn, tn + fp)),
+            *[(f_beta_label(beta), score, None) for beta, score in self.f_beta_scores.items()],
+        ]
+
+        metric_lines = []
+        for name, value, counts in metrics:
+            line = f"{name:<11} {make_robust_bar(value, length=20)}  {value:.4f}"
+            if counts is not None:
+                numerator, denominator = counts
+                line += f"  ({numerator:,}/{denominator:,})"
+            metric_lines.append(line)
+
+        metric_text = "\n".join(metric_lines)
+        return f"{header}\n{separator}\n{summary}\n{metric_text}"
 
     @classmethod
     def from_confusion_matrix(

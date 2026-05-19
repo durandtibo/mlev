@@ -15,6 +15,7 @@ from mlev.results.classification.binary_confmat import (
     compute_precision,
     compute_recall,
     compute_specificity,
+    f_beta_label,
 )
 
 if TYPE_CHECKING:
@@ -248,193 +249,50 @@ def test_compute_f_beta_score_negative_beta_raises() -> None:
         compute_f_beta_score(precision=0.75, recall=0.6, beta=-1.0)
 
 
+##################################
+#     Tests for f_beta_label     #
+##################################
+
+
+@pytest.mark.parametrize(
+    ("beta", "expected"),
+    [
+        pytest.param(0.0, "F0", id="zero"),
+        pytest.param(1.0, "F1", id="one"),
+        pytest.param(2.0, "F2", id="two"),
+        pytest.param(3.0, "F3", id="three"),
+        pytest.param(10.0, "F10", id="ten"),
+        pytest.param(0.5, "F0.5", id="half"),
+        pytest.param(1.5, "F1.5", id="one-point-five"),
+        pytest.param(2.5, "F2.5", id="two-point-five"),
+        pytest.param(0.1, "F0.1", id="one-tenth"),
+        pytest.param(0.25, "F0.25", id="quarter"),
+    ],
+)
+def test_f_beta_label_default_prefix(beta: float, expected: str) -> None:
+    assert f_beta_label(beta) == expected
+
+
+@pytest.mark.parametrize(
+    ("beta", "label", "expected"),
+    [
+        pytest.param(1.0, "f", "f1", id="lowercase-f-integer"),
+        pytest.param(0.5, "f", "f0.5", id="lowercase-f-float"),
+        pytest.param(1.0, "beta", "beta1", id="custom-label-integer"),
+        pytest.param(0.5, "beta", "beta0.5", id="custom-label-float"),
+        pytest.param(1.0, "", "1", id="empty-label-integer"),
+        pytest.param(0.5, "", "0.5", id="empty-label-float"),
+        pytest.param(2.0, "F-score-", "F-score-2", id="long-label-integer"),
+        pytest.param(0.5, "F-score-", "F-score-0.5", id="long-label-float"),
+    ],
+)
+def test_f_beta_label_custom_prefix(beta: float, label: str, expected: str) -> None:
+    assert f_beta_label(beta, label=label) == expected
+
+
 #################################################
 #     Tests for BinaryConfusionMatrixResult     #
 #################################################
-
-
-# --- from_confusion_matrix ---
-
-
-def test_binary_confusion_matrix_result_from_confusion_matrix() -> None:
-    m = BinaryConfusionMatrixResult.from_confusion_matrix(
-        true_positives=3, true_negatives=4, false_positives=1, false_negatives=2
-    )
-    assert m.true_positives == 3
-    assert m.true_negatives == 4
-    assert m.false_positives == 1
-    assert m.false_negatives == 2
-    assert m.num_predictions == 10
-    assert m.num_correct_predictions == 7
-    assert m.accuracy == 0.7
-    assert m.precision == 0.75
-    assert m.recall == 0.6
-    assert m.specificity == 0.8
-    assert m.f_beta_scores == {1.0: 0.6666666666666665}
-
-
-@pytest.mark.parametrize(
-    "betas",
-    [
-        pytest.param((1.0,), id="tuple"),
-        pytest.param([1.0], id="list"),
-        pytest.param([0.5, 1.0, 2.0], id="list-multiple"),
-        pytest.param((0.5, 1.0, 2.0), id="tuple-multiple"),
-    ],
-)
-def test_binary_confusion_matrix_result_from_confusion_matrix_betas_sequence(
-    betas: list[float] | tuple[float, ...],
-) -> None:
-    m = BinaryConfusionMatrixResult.from_confusion_matrix(
-        true_positives=3, true_negatives=4, false_positives=1, false_negatives=2, betas=betas
-    )
-    assert set(m.f_beta_scores.keys()) == set(betas)
-
-
-def test_binary_confusion_matrix_result_from_confusion_matrix_multiple_betas() -> None:
-    m = BinaryConfusionMatrixResult.from_confusion_matrix(
-        true_positives=3,
-        true_negatives=4,
-        false_positives=1,
-        false_negatives=2,
-        betas=[0.5, 1.0, 2.0],
-    )
-    assert m.f_beta_scores == {0.5: 0.7142857142857143, 1.0: 0.6666666666666665, 2.0: 0.625}
-
-
-def test_binary_confusion_matrix_result_from_confusion_matrix_frozen() -> None:
-    m = BinaryConfusionMatrixResult.from_confusion_matrix(
-        true_positives=3, true_negatives=4, false_positives=1, false_negatives=2
-    )
-    with pytest.raises(FrozenInstanceError, match="cannot assign to field 'true_positives'"):
-        m.true_positives = 10  # type: ignore[misc]
-
-
-@pytest.mark.parametrize(
-    ("tp", "tn", "fp", "fn"),
-    [
-        pytest.param(0, 0, 0, 0, id="all-zero"),
-        pytest.param(5, 0, 0, 0, id="only-tp"),
-        pytest.param(0, 5, 0, 0, id="only-tn"),
-        pytest.param(0, 0, 5, 0, id="only-fp"),
-        pytest.param(0, 0, 0, 5, id="only-fn"),
-        pytest.param(10, 10, 10, 10, id="all-equal"),
-    ],
-)
-def test_binary_confusion_matrix_result_from_confusion_matrix_valid(
-    tp: int, tn: int, fp: int, fn: int
-) -> None:
-    m = BinaryConfusionMatrixResult.from_confusion_matrix(
-        true_positives=tp, true_negatives=tn, false_positives=fp, false_negatives=fn
-    )
-    assert m.true_positives == tp
-    assert m.true_negatives == tn
-    assert m.false_positives == fp
-    assert m.false_negatives == fn
-
-
-# --- Validation ---
-
-
-@pytest.mark.parametrize(
-    ("tp", "tn", "fp", "fn", "match"),
-    [
-        pytest.param(-1, 4, 1, 2, "true_positives", id="negative-tp"),
-        pytest.param(3, -1, 1, 2, "true_negatives", id="negative-tn"),
-        pytest.param(3, 4, -1, 2, "false_positives", id="negative-fp"),
-        pytest.param(3, 4, 1, -1, "false_negatives", id="negative-fn"),
-    ],
-)
-def test_binary_confusion_matrix_result_negative_count_raises(
-    tp: int, tn: int, fp: int, fn: int, match: str
-) -> None:
-    with pytest.raises(ValueError, match=match):
-        BinaryConfusionMatrixResult.from_confusion_matrix(
-            true_positives=tp, true_negatives=tn, false_positives=fp, false_negatives=fn
-        )
-
-
-def test_binary_confusion_matrix_result_negative_beta_raises() -> None:
-    with pytest.raises(ValueError, match="beta values must be >= 0"):
-        BinaryConfusionMatrixResult.from_confusion_matrix(
-            true_positives=3,
-            true_negatives=4,
-            false_positives=1,
-            false_negatives=2,
-            betas=[-1.0],
-        )
-
-
-# --- num_predictions ---
-
-
-@pytest.mark.parametrize(
-    ("tp", "tn", "fp", "fn", "expected"),
-    [
-        pytest.param(3, 4, 1, 2, 10, id="standard"),
-        pytest.param(0, 0, 0, 0, 0, id="all-zero"),
-        pytest.param(5, 0, 0, 0, 5, id="only-tp"),
-        pytest.param(0, 0, 3, 7, 10, id="only-incorrect"),
-    ],
-)
-def test_binary_confusion_matrix_result_num_predictions(
-    tp: int, tn: int, fp: int, fn: int, expected: int
-) -> None:
-    m = BinaryConfusionMatrixResult.from_confusion_matrix(
-        true_positives=tp, true_negatives=tn, false_positives=fp, false_negatives=fn
-    )
-    assert m.num_predictions == expected
-
-
-# --- num_correct_predictions ---
-
-
-@pytest.mark.parametrize(
-    ("tp", "tn", "fp", "fn", "expected"),
-    [
-        pytest.param(3, 4, 1, 2, 7, id="standard"),
-        pytest.param(0, 0, 0, 0, 0, id="all-zero"),
-        pytest.param(5, 0, 0, 0, 5, id="only-tp"),
-        pytest.param(0, 5, 0, 0, 5, id="only-tn"),
-        pytest.param(0, 0, 5, 3, 0, id="no-correct"),
-    ],
-)
-def test_binary_confusion_matrix_result_num_correct_predictions(
-    tp: int, tn: int, fp: int, fn: int, expected: int
-) -> None:
-    m = BinaryConfusionMatrixResult.from_confusion_matrix(
-        true_positives=tp, true_negatives=tn, false_positives=fp, false_negatives=fn
-    )
-    assert m.num_correct_predictions == expected
-
-
-# --- accuracy ---
-
-
-@pytest.mark.parametrize(
-    ("tp", "tn", "fp", "fn", "expected"),
-    [
-        pytest.param(3, 4, 1, 2, 0.7, id="standard"),
-        pytest.param(10, 0, 0, 0, 1.0, id="all-tp"),
-        pytest.param(0, 10, 0, 0, 1.0, id="all-tn"),
-        pytest.param(0, 0, 5, 5, 0.0, id="all-incorrect"),
-        pytest.param(1, 1, 1, 1, 0.5, id="equal-counts"),
-    ],
-)
-def test_binary_confusion_matrix_result_accuracy(
-    tp: int, tn: int, fp: int, fn: int, expected: float
-) -> None:
-    m = BinaryConfusionMatrixResult.from_confusion_matrix(
-        true_positives=tp, true_negatives=tn, false_positives=fp, false_negatives=fn
-    )
-    assert m.accuracy == (expected)
-
-
-def test_binary_confusion_matrix_result_accuracy_zero_predictions() -> None:
-    m = BinaryConfusionMatrixResult.from_confusion_matrix(
-        true_positives=0, true_negatives=0, false_positives=0, false_negatives=0
-    )
-    assert math.isnan(m.accuracy)
 
 
 # --- precision ---
@@ -891,3 +749,359 @@ def test_binary_confusion_matrix_result_to_dict_zero_predictions() -> None:
         },
         equal_nan=True,
     )
+
+
+# --- to_str ---
+
+
+@pytest.mark.parametrize(
+    ("tp", "tn", "fp", "fn", "betas", "expected"),
+    [
+        pytest.param(
+            3,
+            4,
+            1,
+            2,
+            [1.0],
+            (
+                "Binary Confusion Matrix\n"
+                "-----------------------\n"
+                "n=10  TP=3  TN=4  FP=1  FN=2\n"
+                "Accuracy    [██████████████░░░░░░]  0.7000  (7/10)\n"
+                "Precision   [███████████████░░░░░]  0.7500  (3/4)\n"
+                "Recall      [████████████░░░░░░░░]  0.6000  (3/5)\n"
+                "Specificity [████████████████░░░░]  0.8000  (4/5)\n"
+                "F1          [█████████████░░░░░░░]  0.6667"
+            ),
+            id="standard",
+        ),
+        pytest.param(
+            3,
+            4,
+            1,
+            2,
+            [0.5, 1.0, 2.0],
+            (
+                "Binary Confusion Matrix\n"
+                "-----------------------\n"
+                "n=10  TP=3  TN=4  FP=1  FN=2\n"
+                "Accuracy    [██████████████░░░░░░]  0.7000  (7/10)\n"
+                "Precision   [███████████████░░░░░]  0.7500  (3/4)\n"
+                "Recall      [████████████░░░░░░░░]  0.6000  (3/5)\n"
+                "Specificity [████████████████░░░░]  0.8000  (4/5)\n"
+                "F0.5        [██████████████░░░░░░]  0.7143\n"
+                "F1          [█████████████░░░░░░░]  0.6667\n"
+                "F2          [████████████░░░░░░░░]  0.6250"
+            ),
+            id="multiple-betas",
+        ),
+        pytest.param(
+            5,
+            5,
+            0,
+            0,
+            [1.0],
+            (
+                "Binary Confusion Matrix\n"
+                "-----------------------\n"
+                "n=10  TP=5  TN=5  FP=0  FN=0\n"
+                "Accuracy    [████████████████████]  1.0000  (10/10)\n"
+                "Precision   [████████████████████]  1.0000  (5/5)\n"
+                "Recall      [████████████████████]  1.0000  (5/5)\n"
+                "Specificity [████████████████████]  1.0000  (5/5)\n"
+                "F1          [████████████████████]  1.0000"
+            ),
+            id="all-correct",
+        ),
+        pytest.param(
+            0,
+            0,
+            5,
+            5,
+            [1.0],
+            (
+                "Binary Confusion Matrix\n"
+                "-----------------------\n"
+                "n=10  TP=0  TN=0  FP=5  FN=5\n"
+                "Accuracy    [░░░░░░░░░░░░░░░░░░░░]  0.0000  (0/10)\n"
+                "Precision   [░░░░░░░░░░░░░░░░░░░░]  0.0000  (0/5)\n"
+                "Recall      [░░░░░░░░░░░░░░░░░░░░]  0.0000  (0/5)\n"
+                "Specificity [░░░░░░░░░░░░░░░░░░░░]  0.0000  (0/5)\n"
+                "F1          [░░░░░░░░░░░░░░░░░░░░]  0.0000"
+            ),
+            id="all-incorrect",
+        ),
+        pytest.param(
+            10,
+            0,
+            0,
+            0,
+            [1.0],
+            (
+                "Binary Confusion Matrix\n"
+                "-----------------------\n"
+                "n=10  TP=10  TN=0  FP=0  FN=0\n"
+                "Accuracy    [████████████████████]  1.0000  (10/10)\n"
+                "Precision   [████████████████████]  1.0000  (10/10)\n"
+                "Recall      [████████████████████]  1.0000  (10/10)\n"
+                "Specificity [░░░░░░░░░░░░░░░░░░░░]  0.0000  (0/0)\n"
+                "F1          [████████████████████]  1.0000"
+            ),
+            id="all-tp",
+        ),
+        pytest.param(
+            0,
+            10,
+            0,
+            0,
+            [1.0],
+            (
+                "Binary Confusion Matrix\n"
+                "-----------------------\n"
+                "n=10  TP=0  TN=10  FP=0  FN=0\n"
+                "Accuracy    [████████████████████]  1.0000  (10/10)\n"
+                "Precision   [░░░░░░░░░░░░░░░░░░░░]  0.0000  (0/0)\n"
+                "Recall      [░░░░░░░░░░░░░░░░░░░░]  0.0000  (0/0)\n"
+                "Specificity [████████████████████]  1.0000  (10/10)\n"
+                "F1          [░░░░░░░░░░░░░░░░░░░░]  0.0000"
+            ),
+            id="all-tn",
+        ),
+        pytest.param(
+            1000,
+            2000,
+            500,
+            500,
+            [1.0],
+            (
+                "Binary Confusion Matrix\n"
+                "-----------------------\n"
+                "n=4,000  TP=1,000  TN=2,000  FP=500  FN=500\n"
+                "Accuracy    [███████████████░░░░░]  0.7500  (3,000/4,000)\n"
+                "Precision   [█████████████░░░░░░░]  0.6667  (1,000/1,500)\n"
+                "Recall      [█████████████░░░░░░░]  0.6667  (1,000/1,500)\n"
+                "Specificity [████████████████░░░░]  0.8000  (2,000/2,500)\n"
+                "F1          [█████████████░░░░░░░]  0.6667"
+            ),
+            id="large-numbers-thousands-separator",
+        ),
+        pytest.param(
+            0,
+            0,
+            0,
+            0,
+            [1.0],
+            (
+                "Binary Confusion Matrix\n"
+                "-----------------------\n"
+                "n=0  TP=0  TN=0  FP=0  FN=0\n"
+                "Accuracy    [????????????????????]  nan  (0/0)\n"
+                "Precision   [????????????????????]  nan  (0/0)\n"
+                "Recall      [????????????????????]  nan  (0/0)\n"
+                "Specificity [????????????????????]  nan  (0/0)\n"
+                "F1          [????????????????????]  nan"
+            ),
+            id="zero-predictions",
+        ),
+    ],
+)
+def test_to_str(
+    tp: int,
+    tn: int,
+    fp: int,
+    fn: int,
+    betas: list[float],
+    expected: str,
+) -> None:
+    m = BinaryConfusionMatrixResult.from_confusion_matrix(
+        true_positives=tp,
+        true_negatives=tn,
+        false_positives=fp,
+        false_negatives=fn,
+        betas=betas,
+    )
+    assert m.to_str() == expected
+
+
+# --- from_confusion_matrix ---
+
+
+def test_binary_confusion_matrix_result_from_confusion_matrix() -> None:
+    m = BinaryConfusionMatrixResult.from_confusion_matrix(
+        true_positives=3, true_negatives=4, false_positives=1, false_negatives=2
+    )
+    assert m.true_positives == 3
+    assert m.true_negatives == 4
+    assert m.false_positives == 1
+    assert m.false_negatives == 2
+    assert m.num_predictions == 10
+    assert m.num_correct_predictions == 7
+    assert m.accuracy == 0.7
+    assert m.precision == 0.75
+    assert m.recall == 0.6
+    assert m.specificity == 0.8
+    assert m.f_beta_scores == {1.0: 0.6666666666666665}
+
+
+@pytest.mark.parametrize(
+    "betas",
+    [
+        pytest.param((1.0,), id="tuple"),
+        pytest.param([1.0], id="list"),
+        pytest.param([0.5, 1.0, 2.0], id="list-multiple"),
+        pytest.param((0.5, 1.0, 2.0), id="tuple-multiple"),
+    ],
+)
+def test_binary_confusion_matrix_result_from_confusion_matrix_betas_sequence(
+    betas: list[float] | tuple[float, ...],
+) -> None:
+    m = BinaryConfusionMatrixResult.from_confusion_matrix(
+        true_positives=3, true_negatives=4, false_positives=1, false_negatives=2, betas=betas
+    )
+    assert set(m.f_beta_scores.keys()) == set(betas)
+
+
+def test_binary_confusion_matrix_result_from_confusion_matrix_multiple_betas() -> None:
+    m = BinaryConfusionMatrixResult.from_confusion_matrix(
+        true_positives=3,
+        true_negatives=4,
+        false_positives=1,
+        false_negatives=2,
+        betas=[0.5, 1.0, 2.0],
+    )
+    assert m.f_beta_scores == {0.5: 0.7142857142857143, 1.0: 0.6666666666666665, 2.0: 0.625}
+
+
+def test_binary_confusion_matrix_result_from_confusion_matrix_frozen() -> None:
+    m = BinaryConfusionMatrixResult.from_confusion_matrix(
+        true_positives=3, true_negatives=4, false_positives=1, false_negatives=2
+    )
+    with pytest.raises(FrozenInstanceError, match="cannot assign to field 'true_positives'"):
+        m.true_positives = 10  # type: ignore[misc]
+
+
+@pytest.mark.parametrize(
+    ("tp", "tn", "fp", "fn"),
+    [
+        pytest.param(0, 0, 0, 0, id="all-zero"),
+        pytest.param(5, 0, 0, 0, id="only-tp"),
+        pytest.param(0, 5, 0, 0, id="only-tn"),
+        pytest.param(0, 0, 5, 0, id="only-fp"),
+        pytest.param(0, 0, 0, 5, id="only-fn"),
+        pytest.param(10, 10, 10, 10, id="all-equal"),
+    ],
+)
+def test_binary_confusion_matrix_result_from_confusion_matrix_valid(
+    tp: int, tn: int, fp: int, fn: int
+) -> None:
+    m = BinaryConfusionMatrixResult.from_confusion_matrix(
+        true_positives=tp, true_negatives=tn, false_positives=fp, false_negatives=fn
+    )
+    assert m.true_positives == tp
+    assert m.true_negatives == tn
+    assert m.false_positives == fp
+    assert m.false_negatives == fn
+
+
+# --- Validation ---
+
+
+@pytest.mark.parametrize(
+    ("tp", "tn", "fp", "fn", "match"),
+    [
+        pytest.param(-1, 4, 1, 2, "true_positives", id="negative-tp"),
+        pytest.param(3, -1, 1, 2, "true_negatives", id="negative-tn"),
+        pytest.param(3, 4, -1, 2, "false_positives", id="negative-fp"),
+        pytest.param(3, 4, 1, -1, "false_negatives", id="negative-fn"),
+    ],
+)
+def test_binary_confusion_matrix_result_negative_count_raises(
+    tp: int, tn: int, fp: int, fn: int, match: str
+) -> None:
+    with pytest.raises(ValueError, match=match):
+        BinaryConfusionMatrixResult.from_confusion_matrix(
+            true_positives=tp, true_negatives=tn, false_positives=fp, false_negatives=fn
+        )
+
+
+def test_binary_confusion_matrix_result_negative_beta_raises() -> None:
+    with pytest.raises(ValueError, match="beta values must be >= 0"):
+        BinaryConfusionMatrixResult.from_confusion_matrix(
+            true_positives=3,
+            true_negatives=4,
+            false_positives=1,
+            false_negatives=2,
+            betas=[-1.0],
+        )
+
+
+# --- num_predictions ---
+
+
+@pytest.mark.parametrize(
+    ("tp", "tn", "fp", "fn", "expected"),
+    [
+        pytest.param(3, 4, 1, 2, 10, id="standard"),
+        pytest.param(0, 0, 0, 0, 0, id="all-zero"),
+        pytest.param(5, 0, 0, 0, 5, id="only-tp"),
+        pytest.param(0, 0, 3, 7, 10, id="only-incorrect"),
+    ],
+)
+def test_binary_confusion_matrix_result_num_predictions(
+    tp: int, tn: int, fp: int, fn: int, expected: int
+) -> None:
+    m = BinaryConfusionMatrixResult.from_confusion_matrix(
+        true_positives=tp, true_negatives=tn, false_positives=fp, false_negatives=fn
+    )
+    assert m.num_predictions == expected
+
+
+# --- num_correct_predictions ---
+
+
+@pytest.mark.parametrize(
+    ("tp", "tn", "fp", "fn", "expected"),
+    [
+        pytest.param(3, 4, 1, 2, 7, id="standard"),
+        pytest.param(0, 0, 0, 0, 0, id="all-zero"),
+        pytest.param(5, 0, 0, 0, 5, id="only-tp"),
+        pytest.param(0, 5, 0, 0, 5, id="only-tn"),
+        pytest.param(0, 0, 5, 3, 0, id="no-correct"),
+    ],
+)
+def test_binary_confusion_matrix_result_num_correct_predictions(
+    tp: int, tn: int, fp: int, fn: int, expected: int
+) -> None:
+    m = BinaryConfusionMatrixResult.from_confusion_matrix(
+        true_positives=tp, true_negatives=tn, false_positives=fp, false_negatives=fn
+    )
+    assert m.num_correct_predictions == expected
+
+
+# --- accuracy ---
+
+
+@pytest.mark.parametrize(
+    ("tp", "tn", "fp", "fn", "expected"),
+    [
+        pytest.param(3, 4, 1, 2, 0.7, id="standard"),
+        pytest.param(10, 0, 0, 0, 1.0, id="all-tp"),
+        pytest.param(0, 10, 0, 0, 1.0, id="all-tn"),
+        pytest.param(0, 0, 5, 5, 0.0, id="all-incorrect"),
+        pytest.param(1, 1, 1, 1, 0.5, id="equal-counts"),
+    ],
+)
+def test_binary_confusion_matrix_result_accuracy(
+    tp: int, tn: int, fp: int, fn: int, expected: float
+) -> None:
+    m = BinaryConfusionMatrixResult.from_confusion_matrix(
+        true_positives=tp, true_negatives=tn, false_positives=fp, false_negatives=fn
+    )
+    assert m.accuracy == (expected)
+
+
+def test_binary_confusion_matrix_result_accuracy_zero_predictions() -> None:
+    m = BinaryConfusionMatrixResult.from_confusion_matrix(
+        true_positives=0, true_negatives=0, false_positives=0, false_negatives=0
+    )
+    assert math.isnan(m.accuracy)
