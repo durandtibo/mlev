@@ -107,46 +107,39 @@ def test_compute_accuracy_nan(num_correct_predictions: float, num_predictions: f
 
 
 @pytest.mark.parametrize(
-    ("true_positives", "false_positives", "num_predictions", "expected"),
+    ("true_positives", "false_positives", "expected"),
     [
-        pytest.param(3, 1, 10, 0.75, id="standard"),
-        pytest.param(5, 0, 10, 1.0, id="no-false-positives"),
-        pytest.param(0, 5, 10, 0.0, id="no-true-positives"),
-        pytest.param(1, 1, 10, 0.5, id="equal-tp-fp"),
+        pytest.param(3, 1, 0.75, id="standard"),
+        pytest.param(5, 0, 1.0, id="no-false-positives"),
+        pytest.param(0, 5, 0.0, id="no-true-positives"),
+        pytest.param(1, 1, 0.5, id="equal-tp-fp"),
     ],
 )
 def test_compute_precision(
     true_positives: float,
     false_positives: float,
-    num_predictions: float,
     expected: float,
 ) -> None:
-    assert compute_precision(true_positives, false_positives, num_predictions) == expected
-
-
-def test_compute_precision_zero_predictions() -> None:
-    assert math.isnan(compute_precision(true_positives=3, false_positives=1, num_predictions=0))
+    assert compute_precision(true_positives, false_positives) == expected
 
 
 def test_compute_precision_zero_denominator() -> None:
-    assert compute_precision(true_positives=0, false_positives=0, num_predictions=10) == 0.0
+    assert compute_precision(true_positives=0, false_positives=0) == 0.0
 
 
 @pytest.mark.parametrize(
-    ("true_positives", "false_positives", "num_predictions"),
+    ("true_positives", "false_positives"),
     [
-        pytest.param(float("nan"), 1, 10, id="nan-tp"),
-        pytest.param(3, float("nan"), 10, id="nan-fp"),
-        pytest.param(3, 1, float("nan"), id="nan-predictions"),
-        pytest.param(float("nan"), float("nan"), float("nan"), id="nan-all"),
+        pytest.param(float("nan"), 1, id="nan-tp"),
+        pytest.param(3, float("nan"), id="nan-fp"),
+        pytest.param(float("nan"), float("nan"), id="nan-all"),
     ],
 )
 def test_compute_precision_nan(
     true_positives: float,
     false_positives: float,
-    num_predictions: float,
 ) -> None:
-    assert math.isnan(compute_precision(true_positives, false_positives, num_predictions))
+    assert math.isnan(compute_precision(true_positives, false_positives))
 
 
 ####################################
@@ -155,46 +148,39 @@ def test_compute_precision_nan(
 
 
 @pytest.mark.parametrize(
-    ("true_positives", "false_negatives", "num_predictions", "expected"),
+    ("true_positives", "false_negatives", "expected"),
     [
-        pytest.param(3, 2, 10, 0.6, id="standard"),
-        pytest.param(5, 0, 10, 1.0, id="no-false-negatives"),
-        pytest.param(0, 5, 10, 0.0, id="no-true-positives"),
-        pytest.param(1, 1, 10, 0.5, id="equal-tp-fn"),
+        pytest.param(3, 2, 0.6, id="standard"),
+        pytest.param(5, 0, 1.0, id="no-false-negatives"),
+        pytest.param(0, 5, 0.0, id="no-true-positives"),
+        pytest.param(1, 1, 0.5, id="equal-tp-fn"),
     ],
 )
 def test_compute_recall(
     true_positives: float,
     false_negatives: float,
-    num_predictions: float,
     expected: float,
 ) -> None:
-    assert compute_recall(true_positives, false_negatives, num_predictions) == expected
-
-
-def test_compute_recall_zero_predictions() -> None:
-    assert math.isnan(compute_recall(true_positives=3, false_negatives=2, num_predictions=0))
+    assert compute_recall(true_positives, false_negatives) == expected
 
 
 def test_compute_recall_zero_denominator() -> None:
-    assert compute_recall(true_positives=0, false_negatives=0, num_predictions=10) == 0.0
+    assert compute_recall(true_positives=0, false_negatives=0) == 0.0
 
 
 @pytest.mark.parametrize(
-    ("true_positives", "false_negatives", "num_predictions"),
+    ("true_positives", "false_negatives"),
     [
-        pytest.param(float("nan"), 2, 10, id="nan-tp"),
-        pytest.param(3, float("nan"), 10, id="nan-fn"),
-        pytest.param(3, 2, float("nan"), id="nan-predictions"),
-        pytest.param(float("nan"), float("nan"), float("nan"), id="nan-all"),
+        pytest.param(float("nan"), 2, id="nan-tp"),
+        pytest.param(3, float("nan"), id="nan-fn"),
+        pytest.param(float("nan"), float("nan"), id="nan-all"),
     ],
 )
 def test_compute_recall_nan(
     true_positives: float,
     false_negatives: float,
-    num_predictions: float,
 ) -> None:
-    assert math.isnan(compute_recall(true_positives, false_negatives, num_predictions))
+    assert math.isnan(compute_recall(true_positives, false_negatives))
 
 
 #########################################
@@ -203,46 +189,39 @@ def test_compute_recall_nan(
 
 
 @pytest.mark.parametrize(
-    ("true_negatives", "false_positives", "num_predictions", "expected"),
+    ("true_negatives", "false_positives", "expected"),
     [
-        pytest.param(4, 1, 10, 0.8, id="standard"),
-        pytest.param(5, 0, 10, 1.0, id="no-false-positives"),
-        pytest.param(0, 5, 10, 0.0, id="no-true-negatives"),
-        pytest.param(1, 1, 10, 0.5, id="equal-tn-fp"),
+        pytest.param(4, 1, 0.8, id="standard"),
+        pytest.param(5, 0, 1.0, id="no-false-positives"),
+        pytest.param(0, 5, 0.0, id="no-true-negatives"),
+        pytest.param(1, 1, 0.5, id="equal-tn-fp"),
     ],
 )
 def test_compute_specificity(
     true_negatives: float,
     false_positives: float,
-    num_predictions: float,
     expected: float,
 ) -> None:
-    assert compute_specificity(true_negatives, false_positives, num_predictions) == expected
-
-
-def test_compute_specificity_zero_predictions() -> None:
-    assert math.isnan(compute_specificity(true_negatives=4, false_positives=1, num_predictions=0))
+    assert compute_specificity(true_negatives, false_positives) == expected
 
 
 def test_compute_specificity_zero_denominator() -> None:
-    assert compute_specificity(true_negatives=0, false_positives=0, num_predictions=10) == 0.0
+    assert compute_specificity(true_negatives=0, false_positives=0) == 0.0
 
 
 @pytest.mark.parametrize(
-    ("true_negatives", "false_positives", "num_predictions"),
+    ("true_negatives", "false_positives"),
     [
-        pytest.param(float("nan"), 1, 10, id="nan-tn"),
-        pytest.param(4, float("nan"), 10, id="nan-fp"),
-        pytest.param(4, 1, float("nan"), id="nan-predictions"),
-        pytest.param(float("nan"), float("nan"), float("nan"), id="nan-all"),
+        pytest.param(float("nan"), 1, id="nan-tn"),
+        pytest.param(4, float("nan"), id="nan-fp"),
+        pytest.param(float("nan"), float("nan"), id="nan-all"),
     ],
 )
 def test_compute_specificity_nan(
     true_negatives: float,
     false_positives: float,
-    num_predictions: float,
 ) -> None:
-    assert math.isnan(compute_specificity(true_negatives, false_positives, num_predictions))
+    assert math.isnan(compute_specificity(true_negatives, false_positives))
 
 
 ##########################################
@@ -429,7 +408,6 @@ def test_binary_confusion_matrix_result_from_confusion_matrix_valid(
                 "accuracy",
                 "precision",
                 "recall",
-                "specificity",
             ),
             id="nan-tp",
         ),
@@ -656,7 +634,7 @@ def test_binary_confusion_matrix_result_precision_zero_predictions() -> None:
     m = BinaryConfusionMatrixResult.from_confusion_matrix(
         true_positives=0, true_negatives=0, false_positives=0, false_negatives=0
     )
-    assert math.isnan(m.precision)
+    assert m.precision == 0.0
 
 
 @pytest.mark.parametrize(
@@ -700,7 +678,7 @@ def test_binary_confusion_matrix_result_recall_zero_predictions() -> None:
     m = BinaryConfusionMatrixResult.from_confusion_matrix(
         true_positives=0, true_negatives=0, false_positives=0, false_negatives=0
     )
-    assert math.isnan(m.recall)
+    assert m.recall == 0.0
 
 
 @pytest.mark.parametrize(
@@ -744,7 +722,7 @@ def test_binary_confusion_matrix_result_specificity_zero_predictions() -> None:
     m = BinaryConfusionMatrixResult.from_confusion_matrix(
         true_positives=0, true_negatives=0, false_positives=0, false_negatives=0
     )
-    assert math.isnan(m.specificity)
+    assert m.specificity == 0.0
 
 
 @pytest.mark.parametrize(
@@ -796,7 +774,7 @@ def test_binary_confusion_matrix_result_f_beta_scores_zero_predictions() -> None
     m = BinaryConfusionMatrixResult.from_confusion_matrix(
         true_positives=0, true_negatives=0, false_positives=0, false_negatives=0
     )
-    assert math.isnan(m.f_beta_scores[1.0])
+    assert m.f_beta_scores[1.0] == 0.0
 
 
 def test_binary_confusion_matrix_result_f_beta_scores_nan() -> None:
@@ -1172,10 +1150,10 @@ def test_binary_confusion_matrix_result_to_dict_zero_predictions() -> None:
         m.to_dict(),
         {
             "accuracy": float("nan"),
-            "precision": float("nan"),
-            "recall": float("nan"),
-            "specificity": float("nan"),
-            "f1": float("nan"),
+            "precision": 0.0,
+            "recall": 0.0,
+            "specificity": 0.0,
+            "f1": 0.0,
             "num_correct_predictions": 0,
             "num_predictions": 0,
             "true_positives": 0,
@@ -1197,7 +1175,7 @@ def test_binary_confusion_matrix_result_to_dict_nan_counts() -> None:
             "accuracy": float("nan"),
             "precision": float("nan"),
             "recall": float("nan"),
-            "specificity": float("nan"),
+            "specificity": 0.8,
             "f1": float("nan"),
             "num_correct_predictions": float("nan"),
             "num_predictions": float("nan"),
@@ -1355,10 +1333,10 @@ def test_binary_confusion_matrix_result_to_dict_nan_counts() -> None:
                 "-----------------------\n"
                 "n=0  TP=0  TN=0  FP=0  FN=0\n"
                 "Accuracy    [????????????????????]  nan  (0/0)\n"
-                "Precision   [????????????????????]  nan  (0/0)\n"
-                "Recall      [????????????????????]  nan  (0/0)\n"
-                "Specificity [????????????????????]  nan  (0/0)\n"
-                "F1          [????????????????????]  nan"
+                "Precision   [░░░░░░░░░░░░░░░░░░░░]  0.0000  (0/0)\n"
+                "Recall      [░░░░░░░░░░░░░░░░░░░░]  0.0000  (0/0)\n"
+                "Specificity [░░░░░░░░░░░░░░░░░░░░]  0.0000  (0/0)\n"
+                "F1          [░░░░░░░░░░░░░░░░░░░░]  0.0000"
             ),
             id="zero-predictions",
         ),
