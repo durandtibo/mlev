@@ -18,9 +18,9 @@ from dataclasses import asdict, dataclass
 from typing import TYPE_CHECKING
 
 from coola.equality import objects_are_allclose, objects_are_equal
-from coola.utils.format import make_bar
 
 from mlev.results.base import BaseResult
+from mlev.utils.format import make_robust_bar
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -421,10 +421,7 @@ class BinaryConfusionMatrixResult(BaseResult):
 
         metric_lines = []
         for name, value, counts in metrics:
-            if math.isnan(value):
-                line = f"{name:<11} {'':22}  nan"
-            else:
-                line = f"{name:<11} {make_bar(value, length=20)}  {value:.4f}"
+            line = f"{name:<11} {make_robust_bar(value, length=20)}  {value:.4f}"
             if counts is not None:
                 numerator, denominator = counts
                 line += f"  ({numerator:,}/{denominator:,})"
