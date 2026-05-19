@@ -79,7 +79,6 @@ def compute_accuracy(num_correct_predictions: float, num_predictions: float) -> 
 def compute_precision(
     true_positives: float,
     false_positives: float,
-    num_predictions: float,
 ) -> float:
     r"""Compute the precision score.
 
@@ -89,37 +88,26 @@ def compute_precision(
     Args:
         true_positives: The number of true positives, or ``nan``.
         false_positives: The number of false positives, or ``nan``.
-        num_predictions: The total number of predictions, or ``nan``.
 
     Returns:
         The ratio ``true_positives / (true_positives + false_positives)``.
-        Returns ``nan`` when ``num_predictions`` is ``0`` or ``nan``,
-        or when either ``true_positives`` or ``false_positives`` is
-        ``nan``. Returns ``0.0`` when
+        Returns ``nan`` when either ``true_positives`` or
+        ``false_positives`` is ``nan``. Returns ``0.0`` when
         ``true_positives + false_positives`` is ``0``.
 
     Example:
         ```pycon
         >>> from mlev.results.classification.binary_confmat import compute_precision
-        >>> compute_precision(true_positives=3, false_positives=1, num_predictions=10)
+        >>> compute_precision(true_positives=3, false_positives=1)
         0.75
-        >>> compute_precision(true_positives=0, false_positives=0, num_predictions=10)
+        >>> compute_precision(true_positives=0, false_positives=0)
         0.0
-        >>> compute_precision(true_positives=0, false_positives=0, num_predictions=0)
-        nan
-        >>> compute_precision(true_positives=float("nan"), false_positives=1, num_predictions=10)
-        nan
-        >>> compute_precision(true_positives=3, false_positives=1, num_predictions=float("nan"))
+        >>> compute_precision(true_positives=float("nan"), false_positives=1)
         nan
 
         ```
     """
-    if (
-        num_predictions == 0
-        or math.isnan(num_predictions)
-        or math.isnan(true_positives)
-        or math.isnan(false_positives)
-    ):
+    if math.isnan(true_positives) or math.isnan(false_positives):
         return float("nan")
     denominator = true_positives + false_positives
     return true_positives / denominator if denominator > 0 else 0.0
@@ -128,7 +116,6 @@ def compute_precision(
 def compute_recall(
     true_positives: float,
     false_negatives: float,
-    num_predictions: float,
 ) -> float:
     r"""Compute the recall (sensitivity) score.
 
@@ -138,37 +125,26 @@ def compute_recall(
     Args:
         true_positives: The number of true positives, or ``nan``.
         false_negatives: The number of false negatives, or ``nan``.
-        num_predictions: The total number of predictions, or ``nan``.
 
     Returns:
         The ratio ``true_positives / (true_positives + false_negatives)``.
-        Returns ``nan`` when ``num_predictions`` is ``0`` or ``nan``,
-        or when either ``true_positives`` or ``false_negatives`` is
-        ``nan``. Returns ``0.0`` when
+        Returns ``nan`` when either ``true_positives`` or
+        ``false_negatives`` is ``nan``. Returns ``0.0`` when
         ``true_positives + false_negatives`` is ``0``.
 
     Example:
         ```pycon
         >>> from mlev.results.classification.binary_confmat import compute_recall
-        >>> compute_recall(true_positives=3, false_negatives=2, num_predictions=10)
+        >>> compute_recall(true_positives=3, false_negatives=2)
         0.6
-        >>> compute_recall(true_positives=0, false_negatives=0, num_predictions=10)
+        >>> compute_recall(true_positives=0, false_negatives=0)
         0.0
-        >>> compute_recall(true_positives=0, false_negatives=0, num_predictions=0)
-        nan
-        >>> compute_recall(true_positives=float("nan"), false_negatives=2, num_predictions=10)
-        nan
-        >>> compute_recall(true_positives=3, false_negatives=2, num_predictions=float("nan"))
+        >>> compute_recall(true_positives=float("nan"), false_negatives=2)
         nan
 
         ```
     """
-    if (
-        num_predictions == 0
-        or math.isnan(num_predictions)
-        or math.isnan(true_positives)
-        or math.isnan(false_negatives)
-    ):
+    if math.isnan(true_positives) or math.isnan(false_negatives):
         return float("nan")
     denominator = true_positives + false_negatives
     return true_positives / denominator if denominator > 0 else 0.0
@@ -177,7 +153,6 @@ def compute_recall(
 def compute_specificity(
     true_negatives: float,
     false_positives: float,
-    num_predictions: float,
 ) -> float:
     r"""Compute the specificity (true negative rate) score.
 
@@ -187,37 +162,26 @@ def compute_specificity(
     Args:
         true_negatives: The number of true negatives, or ``nan``.
         false_positives: The number of false positives, or ``nan``.
-        num_predictions: The total number of predictions, or ``nan``.
 
     Returns:
         The ratio ``true_negatives / (true_negatives + false_positives)``.
-        Returns ``nan`` when ``num_predictions`` is ``0`` or ``nan``,
-        or when either ``true_negatives`` or ``false_positives`` is
-        ``nan``. Returns ``0.0`` when
+        Returns ``nan`` when either ``true_negatives`` or
+        ``false_positives`` is ``nan``. Returns ``0.0`` when
         ``true_negatives + false_positives`` is ``0``.
 
     Example:
         ```pycon
         >>> from mlev.results.classification.binary_confmat import compute_specificity
-        >>> compute_specificity(true_negatives=4, false_positives=1, num_predictions=10)
+        >>> compute_specificity(true_negatives=4, false_positives=1)
         0.8
-        >>> compute_specificity(true_negatives=0, false_positives=0, num_predictions=10)
+        >>> compute_specificity(true_negatives=0, false_positives=0)
         0.0
-        >>> compute_specificity(true_negatives=0, false_positives=0, num_predictions=0)
-        nan
-        >>> compute_specificity(true_negatives=float("nan"), false_positives=1, num_predictions=10)
-        nan
-        >>> compute_specificity(true_negatives=4, false_positives=1, num_predictions=float("nan"))
+        >>> compute_specificity(true_negatives=float("nan"), false_positives=1)
         nan
 
         ```
     """
-    if (
-        num_predictions == 0
-        or math.isnan(num_predictions)
-        or math.isnan(true_negatives)
-        or math.isnan(false_positives)
-    ):
+    if math.isnan(true_negatives) or math.isnan(false_positives):
         return float("nan")
     denominator = true_negatives + false_positives
     return true_negatives / denominator if denominator > 0 else 0.0
@@ -531,12 +495,10 @@ class BinaryConfusionMatrixResult(BaseResult):
         precision = compute_precision(
             true_positives=true_positives,
             false_positives=false_positives,
-            num_predictions=num_predictions,
         )
         recall = compute_recall(
             true_positives=true_positives,
             false_negatives=false_negatives,
-            num_predictions=num_predictions,
         )
 
         return cls(
@@ -554,7 +516,6 @@ class BinaryConfusionMatrixResult(BaseResult):
             specificity=compute_specificity(
                 true_negatives=true_negatives,
                 false_positives=false_positives,
-                num_predictions=num_predictions,
             ),
             f_beta_scores={
                 beta: compute_f_beta_score(precision=precision, recall=recall, beta=beta)
