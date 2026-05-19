@@ -7,6 +7,7 @@ import pytest
 from coola.equality import objects_are_equal
 
 from mlev.results import AccuracyResult
+from mlev.results.classification.accuracy import compute_accuracy
 
 ####################################
 #     Tests for AccuracyResult     #
@@ -293,3 +294,40 @@ def test_accuracy_result_to_display_nan() -> None:
     assert AccuracyResult(
         num_correct_predictions=float("nan"), num_predictions=10
     ).to_display() == ("AccuracyResult: unknown number of correct predictions")
+
+
+######################################
+#     Tests for compute_accuracy     #
+######################################
+
+
+@pytest.mark.parametrize(
+    ("num_correct_predictions", "num_predictions", "expected"),
+    [
+        pytest.param(7, 10, 0.7, id="standard"),
+        pytest.param(10, 10, 1.0, id="all-correct"),
+        pytest.param(0, 10, 0.0, id="none-correct"),
+        pytest.param(1, 1, 1.0, id="single-correct"),
+        pytest.param(0, 1, 0.0, id="single-incorrect"),
+    ],
+)
+def test_compute_accuracy(
+    num_correct_predictions: float, num_predictions: float, expected: float
+) -> None:
+    assert compute_accuracy(num_correct_predictions, num_predictions) == expected
+
+
+def test_compute_accuracy_zero_predictions() -> None:
+    assert math.isnan(compute_accuracy(num_correct_predictions=0, num_predictions=0))
+
+
+@pytest.mark.parametrize(
+    ("num_correct_predictions", "num_predictions"),
+    [
+        pytest.param(float("nan"), 10, id="nan-correct"),
+        pytest.param(7, float("nan"), id="nan-predictions"),
+        pytest.param(float("nan"), float("nan"), id="nan-both"),
+    ],
+)
+def test_compute_accuracy_nan(num_correct_predictions: float, num_predictions: float) -> None:
+    assert math.isnan(compute_accuracy(num_correct_predictions, num_predictions))

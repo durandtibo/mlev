@@ -2,7 +2,7 @@ r"""Classification accuracy result implementation."""
 
 from __future__ import annotations
 
-__all__ = ["AccuracyResult"]
+__all__ = ["AccuracyResult", "compute_accuracy"]
 
 import math
 from dataclasses import dataclass
@@ -11,7 +11,6 @@ from coola.equality import objects_are_allclose, objects_are_equal
 from coola.utils.format import make_bar
 
 from mlev.results.base import BaseResult
-from mlev.results.classification.binary_confmat import compute_accuracy
 
 
 @dataclass(frozen=True)
@@ -129,3 +128,34 @@ class AccuracyResult(BaseResult):
             f"Accuracy {make_bar(accuracy, length=20)}  {accuracy:.4f}  "
             f"({self.num_correct_predictions:,}/{self.num_predictions:,})"
         )
+
+
+def compute_accuracy(num_correct_predictions: float, num_predictions: float) -> float:
+    r"""Compute the accuracy score.
+
+    Args:
+        num_correct_predictions: The number of correct predictions,
+            or ``nan``.
+        num_predictions: The total number of predictions, or ``nan``.
+
+    Returns:
+        The ratio ``num_correct_predictions / num_predictions``.
+        Returns ``nan`` when ``num_predictions`` is ``0`` or ``nan``.
+
+    Example:
+        ```pycon
+        >>> from mlev.results.classification.accuracy import compute_accuracy
+        >>> compute_accuracy(num_correct_predictions=7, num_predictions=10)
+        0.7
+        >>> compute_accuracy(num_correct_predictions=0, num_predictions=0)
+        nan
+        >>> compute_accuracy(num_correct_predictions=float("nan"), num_predictions=10)
+        nan
+        >>> compute_accuracy(num_correct_predictions=7, num_predictions=float("nan"))
+        nan
+
+        ```
+    """
+    if math.isnan(num_predictions) or num_predictions == 0:
+        return float("nan")
+    return num_correct_predictions / num_predictions

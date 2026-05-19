@@ -5,7 +5,6 @@ from __future__ import annotations
 __all__ = [
     "BinaryConfusionMatrixResult",
     "check_betas",
-    "compute_accuracy",
     "compute_f_beta_score",
     "compute_precision",
     "compute_recall",
@@ -20,6 +19,7 @@ from typing import TYPE_CHECKING
 from coola.equality import objects_are_allclose, objects_are_equal
 
 from mlev.results.base import BaseResult
+from mlev.results.classification.accuracy import compute_accuracy
 from mlev.utils.format import make_robust_bar
 
 if TYPE_CHECKING:
@@ -43,37 +43,6 @@ def check_betas(betas: Sequence[float]) -> None:
         if beta < 0:
             msg = f"beta values must be >= 0, got {beta}"
             raise ValueError(msg)
-
-
-def compute_accuracy(num_correct_predictions: float, num_predictions: float) -> float:
-    r"""Compute the accuracy score.
-
-    Args:
-        num_correct_predictions: The number of correct predictions,
-            or ``nan``.
-        num_predictions: The total number of predictions, or ``nan``.
-
-    Returns:
-        The ratio ``num_correct_predictions / num_predictions``.
-        Returns ``nan`` when ``num_predictions`` is ``0`` or ``nan``.
-
-    Example:
-        ```pycon
-        >>> from mlev.results.classification.binary_confmat import compute_accuracy
-        >>> compute_accuracy(num_correct_predictions=7, num_predictions=10)
-        0.7
-        >>> compute_accuracy(num_correct_predictions=0, num_predictions=0)
-        nan
-        >>> compute_accuracy(num_correct_predictions=float("nan"), num_predictions=10)
-        nan
-        >>> compute_accuracy(num_correct_predictions=7, num_predictions=float("nan"))
-        nan
-
-        ```
-    """
-    if math.isnan(num_predictions) or num_predictions == 0:
-        return float("nan")
-    return num_correct_predictions / num_predictions
 
 
 def compute_precision(
