@@ -15,6 +15,7 @@ from mlev.results.classification.binary_confmat import (
     compute_precision,
     compute_recall,
     compute_specificity,
+    f_beta_label,
 )
 
 if TYPE_CHECKING:
@@ -246,6 +247,47 @@ def test_compute_f_beta_score_nan_both() -> None:
 def test_compute_f_beta_score_negative_beta_raises() -> None:
     with pytest.raises(ValueError, match="beta must be >= 0"):
         compute_f_beta_score(precision=0.75, recall=0.6, beta=-1.0)
+
+
+##################################
+#     Tests for f_beta_label     #
+##################################
+
+
+@pytest.mark.parametrize(
+    ("beta", "expected"),
+    [
+        pytest.param(0.0, "F0", id="zero"),
+        pytest.param(1.0, "F1", id="one"),
+        pytest.param(2.0, "F2", id="two"),
+        pytest.param(3.0, "F3", id="three"),
+        pytest.param(10.0, "F10", id="ten"),
+        pytest.param(0.5, "F0.5", id="half"),
+        pytest.param(1.5, "F1.5", id="one-point-five"),
+        pytest.param(2.5, "F2.5", id="two-point-five"),
+        pytest.param(0.1, "F0.1", id="one-tenth"),
+        pytest.param(0.25, "F0.25", id="quarter"),
+    ],
+)
+def test_f_beta_label_default_prefix(beta: float, expected: str) -> None:
+    assert f_beta_label(beta) == expected
+
+
+@pytest.mark.parametrize(
+    ("beta", "label", "expected"),
+    [
+        pytest.param(1.0, "f", "f1", id="lowercase-f-integer"),
+        pytest.param(0.5, "f", "f0.5", id="lowercase-f-float"),
+        pytest.param(1.0, "beta", "beta1", id="custom-label-integer"),
+        pytest.param(0.5, "beta", "beta0.5", id="custom-label-float"),
+        pytest.param(1.0, "", "1", id="empty-label-integer"),
+        pytest.param(0.5, "", "0.5", id="empty-label-float"),
+        pytest.param(2.0, "F-score-", "F-score-2", id="long-label-integer"),
+        pytest.param(0.5, "F-score-", "F-score-0.5", id="long-label-float"),
+    ],
+)
+def test_f_beta_label_custom_prefix(beta: float, label: str, expected: str) -> None:
+    assert f_beta_label(beta, label=label) == expected
 
 
 #################################################

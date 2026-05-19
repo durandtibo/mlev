@@ -10,6 +10,7 @@ __all__ = [
     "compute_precision",
     "compute_recall",
     "compute_specificity",
+    "f_beta_label",
 ]
 
 import math
@@ -217,8 +218,40 @@ def compute_f_beta_score(precision: float, recall: float, beta: float) -> float:
     return (1 + beta_sq) * (precision * recall) / denominator if denominator > 0 else 0.0
 
 
-def f_beta_label(beta: float) -> str:
-    return f"F{int(beta)}" if beta == int(beta) else f"F{beta:g}"
+def f_beta_label(beta: float, label: str = "F") -> str:
+    r"""Return the label for an F-beta score.
+
+    Integer beta values are formatted without a decimal point
+    (e.g. ``1.0`` → ``'F1'``), while non-integer beta values
+    use ``g`` formatting to strip trailing zeros
+    (e.g. ``0.5`` → ``'F0.5'``).
+
+    Args:
+        beta: The beta value. Must be non-negative.
+        label: The prefix to use for the label. Defaults to ``'F'``.
+
+    Returns:
+        A string label of the form ``'{label}{beta}'``.
+
+    Example:
+        ```pycon
+        >>> from mlev.results.classification.binary_confmat import f_beta_label
+        >>> f_beta_label(1.0)
+        'F1'
+        >>> f_beta_label(2.0)
+        'F2'
+        >>> f_beta_label(0.5)
+        'F0.5'
+        >>> f_beta_label(1.5)
+        'F1.5'
+        >>> f_beta_label(1.0, label="f")
+        'f1'
+        >>> f_beta_label(0.5, label="beta")
+        'beta0.5'
+
+        ```
+    """
+    return f"{label}{int(beta)}" if beta == int(beta) else f"{label}{beta:g}"
 
 
 @dataclass(frozen=True)
@@ -319,8 +352,7 @@ class BinaryConfusionMatrixResult(BaseResult):
             f"{prefix}specificity{suffix}": self.specificity,
         }
         for beta, score in self.f_beta_scores.items():
-            key = f"f{int(beta)}" if beta == int(beta) else f"f{beta:g}"
-            out[f"{prefix}{key}{suffix}"] = score
+            out[f"{prefix}{f_beta_label(beta, label='f')}{suffix}"] = score
         out.update(
             {
                 f"{prefix}num_correct_predictions{suffix}": self.num_correct_predictions,
