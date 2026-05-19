@@ -84,5 +84,5 @@ print(confmat_result.precision)
 # 0.6666666666666666
 ```
 
-For more examples and API references, see the documentation:
-https://durandtibo.github.io/mlev/
+For more examples and API references, see the
+[documentation](https://durandtibo.github.io/mlev/).

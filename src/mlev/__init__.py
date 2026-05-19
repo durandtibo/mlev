@@ -9,6 +9,8 @@ Example:
     ```pycon
     >>> from mlev.functional.array import accuracy
     >>> result = accuracy(y_true=[1, 0, 1], y_pred=[1, 1, 1])
+    >>> result
+    AccuracyResult(num_correct_predictions=2, num_predictions=3)
     >>> result.accuracy
     0.6666666666666666
 
