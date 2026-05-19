@@ -262,45 +262,47 @@ class BinaryConfusionMatrixResult(BaseResult):
         f_beta_scores: A mapping of beta values to F-beta scores.
 
     Example:
-    ```pycon
-    >>> from mlev.results import BinaryConfusionMatrixResult
-    >>> m = BinaryConfusionMatrixResult.from_confusion_matrix(
-    ...     true_positives=3,
-    ...     true_negatives=4,
-    ...     false_positives=1,
-    ...     false_negatives=2,
-    ... )
-    >>> m.accuracy
-    0.7
-    >>> m.precision
-    0.75
-    >>> m.recall
-    0.6
-    >>> m.specificity
-    0.8
-    >>> m.f_beta_scores
-    {1.0: 0.6666666666666665}
-    >>> print(m.to_display())
-    Binary Confusion Matrix
-    -----------------------
-    n=10  TP=3  TN=4  FP=1  FN=2
-    Accuracy    [██████████████░░░░░░]  0.7000  (7/10)
-    Precision   [███████████████░░░░░]  0.7500  (3/4)
-    Recall      [████████████░░░░░░░░]  0.6000  (3/5)
-    Specificity [████████████████░░░░]  0.8000  (4/5)
-    F1          [█████████████░░░░░░░]  0.6667
+        ```pycon
+        >>> from mlev.results import BinaryConfusionMatrixResult
+        >>> m = BinaryConfusionMatrixResult.from_confusion_matrix(
+        ...     true_positives=3,
+        ...     true_negatives=4,
+        ...     false_positives=1,
+        ...     false_negatives=2,
+        ... )
+        >>> m
+        BinaryConfusionMatrixResult(true_positives=3, true_negatives=4, false_positives=1, false_negatives=2, num_predictions=10, num_correct_predictions=7, accuracy=0.7, precision=0.75, recall=0.6, specificity=0.8, f_beta_scores={1.0: 0.6666...})
+        >>> m.accuracy
+        0.7
+        >>> m.precision
+        0.75
+        >>> m.recall
+        0.6
+        >>> m.specificity
+        0.8
+        >>> m.f_beta_scores
+        {1.0: 0.6666666666666665}
+        >>> print(m.to_display())
+        Binary Confusion Matrix
+        -----------------------
+        n=10  TP=3  TN=4  FP=1  FN=2
+        Accuracy    [██████████████░░░░░░]  0.7000  (7/10)
+        Precision   [███████████████░░░░░]  0.7500  (3/4)
+        Recall      [████████████░░░░░░░░]  0.6000  (3/5)
+        Specificity [████████████████░░░░]  0.8000  (4/5)
+        F1          [█████████████░░░░░░░]  0.6667
 
-    >>> # NaN propagates to derived metrics
-    >>> m_nan = BinaryConfusionMatrixResult.from_confusion_matrix(
-    ...     true_positives=float("nan"),
-    ...     true_negatives=4,
-    ...     false_positives=1,
-    ...     false_negatives=2,
-    ... )
-    >>> m_nan.accuracy
-    nan
+        >>> # NaN propagates to derived metrics
+        >>> m_nan = BinaryConfusionMatrixResult.from_confusion_matrix(
+        ...     true_positives=float("nan"),
+        ...     true_negatives=4,
+        ...     false_positives=1,
+        ...     false_negatives=2,
+        ... )
+        >>> m_nan.accuracy
+        nan
 
-    ```
+        ```
     """
 
     true_positives: int | float
