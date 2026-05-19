@@ -1,7 +1,8 @@
 r"""Compute classification accuracy from DataFrame columns.
 
-This module powers :func:`mlev.functional.frame.accuracy` and evaluates a pair
-of ground-truth and predicted-label columns from a Polars DataFrame.
+This module powers :func:`mlev.functional.frame.accuracy` and evaluates
+a pair of ground-truth and predicted-label columns from a Polars
+DataFrame.
 """
 
 from __future__ import annotations
