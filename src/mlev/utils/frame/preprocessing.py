@@ -11,7 +11,8 @@ if TYPE_CHECKING:
 
 
 def preprocess(frame: pl.DataFrame, drop_missing: bool = False) -> pl.DataFrame:
-    r"""Preprocess a DataFrame by optionally removing rows with null values.
+    r"""Preprocess a DataFrame by optionally removing rows with null
+    values.
 
     Args:
         frame: The DataFrame to preprocess.
