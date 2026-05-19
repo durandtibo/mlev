@@ -529,14 +529,14 @@ class BinaryConfusionMatrixResult(BaseResult):
         num_predictions = true_positives + true_negatives + false_positives + false_negatives
         num_correct_predictions = true_positives + true_negatives
         precision = compute_precision(
-            int(true_positives) if not math.isnan(float(true_positives)) else float("nan"),
-            int(false_positives) if not math.isnan(float(false_positives)) else float("nan"),
-            int(num_predictions) if not math.isnan(float(num_predictions)) else float("nan"),
+            true_positives=true_positives,
+            false_positives=false_positives,
+            num_predictions=num_predictions,
         )
         recall = compute_recall(
-            int(true_positives) if not math.isnan(float(true_positives)) else float("nan"),
-            int(false_negatives) if not math.isnan(float(false_negatives)) else float("nan"),
-            int(num_predictions) if not math.isnan(float(num_predictions)) else float("nan"),
+            true_positives=true_positives,
+            false_negatives=false_negatives,
+            num_predictions=num_predictions,
         )
 
         return cls(
@@ -547,19 +547,17 @@ class BinaryConfusionMatrixResult(BaseResult):
             num_predictions=num_predictions,
             num_correct_predictions=num_correct_predictions,
             accuracy=compute_accuracy(
-                (
-                    num_correct_predictions
-                    if not math.isnan(float(num_correct_predictions))
-                    else float("nan")
-                ),
-                int(num_predictions) if not math.isnan(float(num_predictions)) else float("nan"),
+                num_correct_predictions=num_correct_predictions, num_predictions=num_predictions
             ),
             precision=precision,
             recall=recall,
             specificity=compute_specificity(
-                int(true_negatives) if not math.isnan(float(true_negatives)) else float("nan"),
-                int(false_positives) if not math.isnan(float(false_positives)) else float("nan"),
-                int(num_predictions) if not math.isnan(float(num_predictions)) else float("nan"),
+                true_negatives=true_negatives,
+                false_positives=false_positives,
+                num_predictions=num_predictions,
             ),
-            f_beta_scores={beta: compute_f_beta_score(precision, recall, beta) for beta in betas},
+            f_beta_scores={
+                beta: compute_f_beta_score(precision=precision, recall=recall, beta=beta)
+                for beta in betas
+            },
         )
