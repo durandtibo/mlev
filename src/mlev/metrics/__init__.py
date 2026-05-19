@@ -1,6 +1,8 @@
 r"""Object-oriented metric API namespaces.
 
-This package groups metric APIs by input type (array and frame) for
-workflows that rely on metric objects instead of one-shot functional
-calls.
+This package groups object-style metric namespaces by input type:
+array-based and DataFrame-based APIs.
+
+Use :mod:`mlev.functional` for one-shot metric computation and
+:mod:`mlev.results` for immutable metric result containers.
 """
