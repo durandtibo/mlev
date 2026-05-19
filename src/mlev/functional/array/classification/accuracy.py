@@ -1,4 +1,8 @@
-r"""Contain code to compute the accuracy metric."""
+r"""Compute classification accuracy from array-like inputs.
+
+This module powers :func:`mlev.functional.array.accuracy` and supports NumPy
+arrays, Polars series, and Python sequences.
+"""
 
 from __future__ import annotations
 
@@ -35,7 +39,10 @@ def accuracy(
             ``'raise'``.
 
     Returns:
-        The accuracy result.
+        The accuracy result. When missing values are present and
+            ``missing_policy="propagate"``, the result keeps
+            ``num_predictions`` and sets ``num_correct_predictions`` to
+            ``nan``.
 
     Raises:
         ValueError: if ``missing_policy`` is invalid.

@@ -1,1 +1,5 @@
-r"""Array-oriented classification functional metrics."""
+r"""Array-based functional metrics for classification tasks.
+
+Use this namespace for classification metrics that accept array-like
+ground-truth and prediction inputs.
+"""

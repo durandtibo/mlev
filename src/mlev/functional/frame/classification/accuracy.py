@@ -1,4 +1,8 @@
-r"""Contain code to compute the accuracy metric."""
+r"""Compute classification accuracy from DataFrame columns.
+
+This module powers :func:`mlev.functional.frame.accuracy` and evaluates a pair
+of ground-truth and predicted-label columns from a Polars DataFrame.
+"""
 
 from __future__ import annotations
 
@@ -35,7 +39,10 @@ def accuracy(
             ``'raise'``.
 
     Returns:
-        The accuracy result.
+        The accuracy result. When missing values are present and
+            ``missing_policy="propagate"``, the result keeps
+            ``num_predictions`` and sets ``num_correct_predictions`` to
+            ``nan``.
 
     Raises:
         ValueError: if ``missing_policy`` is invalid.
