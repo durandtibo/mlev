@@ -2,10 +2,10 @@ r"""Shared typing aliases used by the public API.
 
 Example:
     ```pycon
-    >>> import numpy as np
-    >>> from mlev.functional.array import accuracy
-    >>> accuracy(y_true=np.array([1, 0, 1]), y_pred=[1, 1, 1])
-    AccuracyResult(num_correct_predictions=2, num_predictions=3)
+    >>> from mlev.typing import ArrayLike
+    >>> values: ArrayLike = [1, 0, 1]
+    >>> values
+    [1, 0, 1]
 
     ```
 """
