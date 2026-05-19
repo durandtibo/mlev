@@ -1,7 +1,7 @@
-r"""Compute binary confusion matrix from array-like inputs.
+r"""Compute binary confusion matrices from DataFrame label columns.
 
-This module powers :func:`mlev.functional.array.binary_confusion_matrix` and supports
-Polars DataFrames.
+This module provides the DataFrame-based counterpart to
+:func:`mlev.functional.array.binary_confusion_matrix`.
 """
 
 from __future__ import annotations
@@ -55,9 +55,9 @@ def binary_confusion_matrix(
 
     Raises:
         ValueError: if ``missing_policy`` is invalid.
-        ValueError: if ``y_true`` contains missing values and
+        ValueError: if the ``y_true_col`` column contains missing values and
             ``missing_policy`` is ``'raise'``.
-        ValueError: if ``y_pred`` contains missing values and
+        ValueError: if the ``y_pred_col`` column contains missing values and
             ``missing_policy`` is ``'raise'``.
 
     Example:
