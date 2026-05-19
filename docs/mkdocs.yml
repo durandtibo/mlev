@@ -30,6 +30,7 @@ nav:
       - refs/functional.md
       - refs/metrics.md
       - refs/results.md
+      - refs/typing.md
       - refs/utils.md
   - GitHub: https://github.com/durandtibo/mlev
 
