@@ -1,7 +1,7 @@
 r"""Compute classification accuracy from array-like inputs.
 
-This module powers :func:`mlev.functional.array.accuracy` and supports NumPy
-arrays, Polars series, and Python sequences.
+This module powers :func:`mlev.functional.array.accuracy` and supports
+NumPy arrays, Polars series, and Python sequences.
 """
 
 from __future__ import annotations
