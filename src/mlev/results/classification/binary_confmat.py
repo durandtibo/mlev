@@ -311,6 +311,16 @@ class BinaryConfusionMatrixResult(BaseResult):
     0.8
     >>> m.f_beta_scores
     {1.0: 0.6666666666666665}
+    >>> print(m.to_display())
+    Binary Confusion Matrix
+    -----------------------
+    n=10  TP=3  TN=4  FP=1  FN=2
+    Accuracy    [██████████████░░░░░░]  0.7000  (7/10)
+    Precision   [███████████████░░░░░]  0.7500  (3/4)
+    Recall      [████████████░░░░░░░░]  0.6000  (3/5)
+    Specificity [████████████████░░░░]  0.8000  (4/5)
+    F1          [█████████████░░░░░░░]  0.6667
+
     >>> # NaN propagates to derived metrics
     >>> m_nan = BinaryConfusionMatrixResult.from_confusion_matrix(
     ...     true_positives=float("nan"),
