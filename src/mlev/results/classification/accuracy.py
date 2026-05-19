@@ -11,6 +11,7 @@ from coola.equality import objects_are_allclose, objects_are_equal
 from coola.utils.format import make_bar
 
 from mlev.results.base import BaseResult
+from mlev.results.classification.binary_confmat import compute_accuracy
 
 
 @dataclass(frozen=True)
@@ -70,9 +71,10 @@ class AccuracyResult(BaseResult):
             The ratio ``num_correct_predictions / num_predictions``.
             Returns ``nan`` when ``num_predictions`` is ``0``.
         """
-        if self.num_predictions == 0:
-            return float("nan")
-        return self.num_correct_predictions / self.num_predictions
+        return compute_accuracy(
+            num_correct_predictions=self.num_correct_predictions,
+            num_predictions=self.num_predictions,
+        )
 
     def combine(self, other: AccuracyResult) -> AccuracyResult:
         if not isinstance(other, AccuracyResult):
