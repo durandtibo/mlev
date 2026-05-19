@@ -46,7 +46,7 @@ class BaseResult(ABC):
             >>> m = m1.combine(m2)
             >>> m
             AccuracyResult(num_correct_predictions=10, num_predictions=20)
-            >>> print(m.to_str())
+            >>> print(m.to_display())
             [██████████░░░░░░░░░░]  0.5000  (10/20)
             >>> m.to_dict()
             {'accuracy': 0.5, 'num_correct_predictions': 10, 'num_predictions': 20}
