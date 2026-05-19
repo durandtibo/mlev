@@ -10,7 +10,6 @@ from coola.equality import objects_are_allclose
 from mlev.results import BinaryConfusionMatrixResult
 from mlev.results.classification.binary_confmat import (
     check_betas,
-    compute_accuracy,
     compute_f_beta_score,
     compute_precision,
     compute_recall,
@@ -62,43 +61,6 @@ def test_check_betas_valid(betas: Sequence[float]) -> None:
 def test_check_betas_invalid(betas: Sequence[float], match: str) -> None:
     with pytest.raises(ValueError, match=match):
         check_betas(betas)
-
-
-######################################
-#     Tests for compute_accuracy     #
-######################################
-
-
-@pytest.mark.parametrize(
-    ("num_correct_predictions", "num_predictions", "expected"),
-    [
-        pytest.param(7, 10, 0.7, id="standard"),
-        pytest.param(10, 10, 1.0, id="all-correct"),
-        pytest.param(0, 10, 0.0, id="none-correct"),
-        pytest.param(1, 1, 1.0, id="single-correct"),
-        pytest.param(0, 1, 0.0, id="single-incorrect"),
-    ],
-)
-def test_compute_accuracy(
-    num_correct_predictions: float, num_predictions: float, expected: float
-) -> None:
-    assert compute_accuracy(num_correct_predictions, num_predictions) == expected
-
-
-def test_compute_accuracy_zero_predictions() -> None:
-    assert math.isnan(compute_accuracy(num_correct_predictions=0, num_predictions=0))
-
-
-@pytest.mark.parametrize(
-    ("num_correct_predictions", "num_predictions"),
-    [
-        pytest.param(float("nan"), 10, id="nan-correct"),
-        pytest.param(7, float("nan"), id="nan-predictions"),
-        pytest.param(float("nan"), float("nan"), id="nan-both"),
-    ],
-)
-def test_compute_accuracy_nan(num_correct_predictions: float, num_predictions: float) -> None:
-    assert math.isnan(compute_accuracy(num_correct_predictions, num_predictions))
 
 
 ########################################
