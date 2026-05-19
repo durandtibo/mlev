@@ -32,7 +32,7 @@ class AccuracyResult(BaseResult):
         >>> m.to_dict()
         {'accuracy': 0.7, 'num_correct_predictions': 7, 'num_predictions': 10}
         >>> print(m.to_display())
-        [██████████████░░░░░░]  0.7000  (7/10)
+        Accuracy [██████████████░░░░░░]  0.7000  (7/10)
 
         ```
     """
@@ -118,21 +118,12 @@ class AccuracyResult(BaseResult):
         }
 
     def to_display(self) -> str:
-        r"""Return a human-readable summary string.
-
-        Returns:
-            A progress-bar based summary when prediction counts are
-            available, ``"AccuracyResult: no predictions"`` when
-            ``num_predictions`` is ``0``, and
-            ``"AccuracyResult: unknown number of correct predictions"``
-            when ``num_correct_predictions`` is ``nan``.
-        """
         if self.num_predictions == 0:
             return f"{self.__class__.__qualname__}: no predictions"
         if math.isnan(self.num_correct_predictions):
             return f"{self.__class__.__qualname__}: unknown number of correct predictions"
         accuracy = self.accuracy
         return (
-            f"{make_bar(accuracy, length=20)}  {accuracy:.4f}  "
+            f"Accuracy {make_bar(accuracy, length=20)}  {accuracy:.4f}  "
             f"({self.num_correct_predictions:,}/{self.num_predictions:,})"
         )

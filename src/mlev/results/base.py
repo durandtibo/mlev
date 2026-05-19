@@ -46,10 +46,6 @@ class BaseResult(ABC):
             >>> m = m1.combine(m2)
             >>> m
             AccuracyResult(num_correct_predictions=10, num_predictions=20)
-            >>> print(m.to_display())
-            [██████████░░░░░░░░░░]  0.5000  (10/20)
-            >>> m.to_dict()
-            {'accuracy': 0.5, 'num_correct_predictions': 10, 'num_predictions': 20}
 
             ```
         """
@@ -133,6 +129,23 @@ class BaseResult(ABC):
             >>> m = AccuracyResult(num_correct_predictions=7, num_predictions=10)
             >>> m.to_dict()
             {'accuracy': 0.7, 'num_correct_predictions': 7, 'num_predictions': 10}
+
+            ```
+        """
+
+    @abstractmethod
+    def to_display(self) -> str:
+        r"""Return a human-readable summary string.
+
+        Returns:
+            A human-readable summary string
+
+        Example:
+            ```pycon
+            >>> from mlev.results import AccuracyResult
+            >>> m = AccuracyResult(num_correct_predictions=7, num_predictions=10)
+            >>> print(m.to_display())
+            Accuracy [██████████████░░░░░░]  0.7000  (7/10)
 
             ```
         """

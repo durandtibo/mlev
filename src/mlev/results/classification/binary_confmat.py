@@ -366,34 +366,6 @@ class BinaryConfusionMatrixResult(BaseResult):
         return out
 
     def to_display(self) -> str:
-        r"""Return a human-friendly text representation of the
-        classification results.
-
-        Returns:
-            A formatted string with a confusion matrix summary and
-            progress bars for each metric.
-
-        Example:
-            ```pycon
-            >>> from mlev.results import BinaryConfusionMatrixResult
-            >>> m = BinaryConfusionMatrixResult.from_confusion_matrix(
-            ...     true_positives=3,
-            ...     true_negatives=4,
-            ...     false_positives=1,
-            ...     false_negatives=2,
-            ... )
-            >>> print(m.to_display())
-            Binary Confusion Matrix
-            -----------------------
-            n=10  TP=3  TN=4  FP=1  FN=2
-            Accuracy    [██████████████░░░░░░]  0.7000  (7/10)
-            Precision   [███████████████░░░░░]  0.7500  (3/4)
-            Recall      [████████████░░░░░░░░]  0.6000  (3/5)
-            Specificity [████████████████░░░░]  0.8000  (4/5)
-            F1          [█████████████░░░░░░░]  0.6667
-
-            ```
-        """
         header = "Binary Confusion Matrix"
         separator = "-" * len(header)
         summary = (
