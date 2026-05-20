@@ -55,11 +55,10 @@ python -c "import mlev; print(mlev.__version__)"
 Or try a simple example:
 
 ```python
-from mlev import factory
+from mlev.functional.array import accuracy
 
-# Create a Counter object from the standard library
-counter = factory("collections.Counter", [1, 2, 1, 3])
-print(counter)  # Output: Counter({1: 2, 2: 1, 3: 1})
+result = accuracy(y_true=[1, 0, 1, 1], y_pred=[1, 1, 1, 0])
+print(result.accuracy)  # Output: 0.5
 ```
 
 ## Installing from source

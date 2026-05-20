@@ -53,4 +53,36 @@
     <br/>
 </p>
 
-Library to evaluate ML models
+Lightweight utilities to evaluate machine-learning predictions.
+
+## Overview
+
+`mlev` provides:
+
+- functional helpers to compute metrics from arrays or DataFrames,
+- immutable result objects with convenient aggregations and display helpers.
+
+## Installation
+
+```shell
+pip install mlev
+```
+
+## Quickstart
+
+```python
+from mlev.functional.array import accuracy, binary_confusion_matrix
+
+accuracy_result = accuracy(y_true=[1, 0, 1, 1], y_pred=[1, 1, 1, 0])
+print(accuracy_result)
+# AccuracyResult(num_correct_predictions=2, num_predictions=4)
+print(accuracy_result.accuracy)
+# 0.5
+
+confmat_result = binary_confusion_matrix(y_true=[1, 0, 1, 1], y_pred=[1, 1, 1, 0])
+print(confmat_result.precision)
+# 0.6666666666666666
+```
+
+For more examples and API references, see the
+[documentation](https://durandtibo.github.io/mlev/).
