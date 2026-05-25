@@ -17,8 +17,9 @@ Example:
 
 from __future__ import annotations
 
-__all__ = ["AccuracyResult", "BaseResult", "BinaryConfusionMatrixResult"]
+__all__ = ["AccuracyResult", "BalancedAccuracyResult", "BaseResult", "BinaryConfusionMatrixResult"]
 
 from mlev.results.base import BaseResult
 from mlev.results.classification.accuracy import AccuracyResult
+from mlev.results.classification.balanced_accuracy import BalancedAccuracyResult
 from mlev.results.classification.binary_confmat import BinaryConfusionMatrixResult
